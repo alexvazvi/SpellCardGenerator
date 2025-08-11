@@ -1,0 +1,135 @@
+
+.card-generator-layout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 2rem;
+  align-items: start;
+  padding: 1rem;
+}
+
+.preview-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 80px); /* Adjust height considering the nav bar */
+  padding: 1rem;
+}
+
+/* Accordion Styles */
+.accordion-item {
+  border-bottom: 1px solid var(--color-accent);
+  margin-bottom: 0.5rem;
+}
+
+.accordion-header {
+  padding: 0.75rem 0.5rem;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--color-accent-dark);
+  list-style-type: none; /* Remove default marker */
+  position: relative;
+}
+
+.accordion-header::-webkit-details-marker {
+  display: none; /* Hide for Chrome/Safari */
+}
+
+.accordion-header::before {
+  content: '+';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+  transition: transform 0.2s;
+}
+
+.accordion-item[open] > .accordion-header::before {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+
+.accordion-content {
+  padding: 1rem;
+  background-color: rgba(0,0,0,0.02);
+}
+
+.dark-mode .accordion-content {
+   background-color: rgba(255,255,255,0.02);
+}
+
+
+/* Form Group Styles */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+  font-size: 0.9em;
+}
+
+.inline-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.inline-group label {
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.inline-group input[type="color"] {
+    width: 60px;
+    height: 25px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.inline-group input[type="number"] {
+    width: 50px;
+    text-align: right;
+    background: rgba(0,0,0,0.05);
+    border: 1px dashed var(--color-accent);
+    border-radius: 4px;
+    color: var(--color-text);
+}
+
+.color-group > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.color-group input[type="color"] {
+    flex-grow: 1;
+    height: 35px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.action-button-circular {
+    background-color: var(--color-accent);
+    color: var(--color-parchment);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--color-accent-dark);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.action-button-circular:hover {
+  background-color: var(--color-accent-dark);
+}
