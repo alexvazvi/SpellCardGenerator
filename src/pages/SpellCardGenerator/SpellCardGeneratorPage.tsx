@@ -136,7 +136,7 @@ const SpellCardGeneratorPage = () => {
   };
   
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.event.target.value);
+    setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to first page on new search
   };
 
