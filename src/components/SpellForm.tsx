@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
+import FiligreeDivider from './FiligreeDivider';
 import type { Spell } from '../types';
 
 interface SpellFormProps {
@@ -46,12 +47,14 @@ const SpellForm: React.FC<SpellFormProps> = ({ onAddSpell, showSuccess }) => {
           <input name="level" value={newSpell.level} onChange={handleChange} placeholder="Nivel" className="form-card-input-inline" style={{width: '40px'}} required />
         </p>
       </div>
+      <FiligreeDivider />
       <div className="card-details">
         <div><strong>Lanzamiento:</strong> <input name="castingTime" value={newSpell.castingTime} onChange={handleChange} placeholder="1 acción" className="form-card-input" required /></div>
         <div><strong>Alcance:</strong> <input name="range" value={newSpell.range} onChange={handleChange} placeholder="60 pies" className="form-card-input" required /></div>
         <div><strong>Componentes:</strong> <input name="components" value={newSpell.components} onChange={handleChange} placeholder="V, S, M" className="form-card-input" required /></div>
         <div><strong>Duración:</strong> <input name="duration" value={newSpell.duration} onChange={handleChange} placeholder="Instantánea" className="form-card-input" required /></div>
       </div>
+      <FiligreeDivider />
       <div className="card-body">
         <textarea
           name="description"

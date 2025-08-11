@@ -16,6 +16,30 @@
   font-size: 2rem;
   color: var(--color-accent);
   text-shadow: 0 0 10px var(--color-accent);
+  display: flex;
+  align-items: center;
+}
+
+.nav-app-title {
+  font-size: 1.4rem;
+  margin-left: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--color-parchment);
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.nav-user {
+  position: relative;
+}
+
+.nav-user-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
 }
 
 /* === Navigation Links === */
@@ -54,7 +78,7 @@
   transition: width 0.3s ease;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover, .nav-link.active, a.nav-link.active {
   color: var(--color-parchment);
   background-color: var(--color-accent);
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
@@ -87,11 +111,61 @@
   color: #c5bba8;
 }
 
-.dark-mode .nav-link:hover, .dark-mode .nav-link.active {
+.dark-mode .nav-link:hover, .dark-mode .nav-link.active, .dark-mode a.nav-link.active {
   background-color: var(--color-accent-dark);
   color: #1a1411;
 }
 
 .dark-mode .nav-link::before {
   background-color: var(--color-parchment);
+}
+
+/* === Dropdown Menu === */
+.dropdown-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: var(--color-parchment-darker);
+  border: 2px solid var(--color-accent);
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  padding: 0.5rem 0;
+  z-index: 100;
+  width: 220px;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-accent);
+  color: var(--color-parchment);
+}
+
+.dropdown-item .fas {
+  width: 20px;
+  text-align: center;
+}
+
+.dark-mode .dropdown-menu {
+  background-color: #1a1411;
+  border-color: var(--color-accent-dark);
+}
+
+.dark-mode .dropdown-item {
+  color: #c5bba8;
+}
+
+.dark-mode .dropdown-item:hover {
+  background-color: var(--color-accent-dark);
+  color: #1a1411;
 }

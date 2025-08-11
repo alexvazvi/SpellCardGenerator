@@ -1,0 +1,18 @@
+.page-container-wrapper {
+  width: 90%; /* Reduced width to increase horizontal margins */
+  max-width: 1600px; /* Slightly reduced max-width for better aesthetics on large screens */
+  margin: 2rem auto; /* Vertical margin and auto horizontal margins for centering */
+  padding: clamp(1.5rem, 3vw, 3rem);
+  background: var(--color-parchment);
+  border: 10px solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(to bottom right, #a08055, #604028);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  border-radius: 5px; /* A slight radius for a more refined look */
+}
+
+.dark-mode .page-container-wrapper {
+  background: #2c221e; /* Dark parchment */
+  border-image-source: linear-gradient(to bottom right, var(--color-accent), #a08055);
+}

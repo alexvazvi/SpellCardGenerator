@@ -1,0 +1,108 @@
+/* .page-header, .page-title, .page-subtitle are now handled by App.css */
+  
+.plans-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    align-items: stretch;
+    margin-bottom: 3rem;
+}
+  
+.plan-card {
+    background: var(--color-parchment);
+    border: 2px solid var(--color-accent);
+    border-radius: 15px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.plan-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+    border-color: var(--color-accent-dark);
+}
+
+.plan-card.recommended {
+    border-width: 4px;
+    border-color: var(--color-accent-dark);
+}
+
+.recommended-badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-accent-dark);
+    color: var(--color-parchment);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-family: var(--font-display);
+}
+  
+.plan-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.plan-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-accent-dark);
+}
+  
+.plan-name {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    margin: 0;
+}
+  
+.plan-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.price-amount {
+    font-size: 2.5rem;
+}
+  
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    flex-grow: 1;
+}
+  
+.plan-features li {
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed var(--color-accent);
+    color: var(--color-text);
+}
+
+.plan-features li .fa-check-circle {
+    color: var(--color-accent-dark);
+    margin-right: 0.5rem;
+}
+
+.plan-footer {
+    text-align: center;
+}
+
+.select-plan-button {
+    width: 100%;
+}
+
+/* To-do Section */
+.subscription-page .todo-section {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+}
+  
+.subscription-page .section-title {
+    font-size: 1.5rem;
+}  

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'animate.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './SpellCardGeneratorPage.css';
-import Header from '../../components/Header';
+import PageContainer from '../../components/PageContainer';
 import SpellCard from '../../components/SpellCard';
 import SpellForm from '../../components/SpellForm';
 import type { Spell } from '../../types';
@@ -161,15 +161,39 @@ const SpellCardGeneratorPage = () => {
     setCurrentPage(1); // Reset to first page on new search
   };
 
+  const importInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImportClick = () => {
+    importInputRef.current?.click();
+  };
+
   return (
-    <div className={`main-container ${darkMode ? 'dark-mode' : ''}`}>
-      <Header 
-        toggleDarkMode={toggleDarkMode} 
-        darkMode={darkMode} 
-        onImport={handleImport} 
-        onExportPDF={exportToPDF}
-      />
+    <PageContainer darkMode={darkMode}>
+      <div className={`spell-card-generator-page`}>
+        <div className="page-header">
+          <h1 className="page-title">Grimorio de Hechizos</h1>
+        <p className="page-subtitle">Forja, personaliza y organiza tus hechizos de D&D.</p>
+      </div>
       
+      <div className="actions-toolbar">
+        <input
+          type="file"
+          ref={importInputRef}
+          onChange={handleImport}
+          style={{ display: 'none' }}
+          accept=".json"
+        />
+        <button className="action-button" onClick={handleImportClick} title="Importar desde JSON">
+            <i className="fas fa-file-import"></i>
+        </button>
+        <button className="action-button" onClick={exportToPDF} title="Exportar a PDF">
+            <i className="fas fa-file-pdf"></i>
+        </button>
+        <button className="action-button" onClick={toggleDarkMode} title={darkMode ? 'Modo Claro' : 'Modo Oscuro'}>
+            <i className={`fas ${darkMode ? 'fa-sun' : 'fa-moon'}`}></i>
+        </button>
+      </div>
+
       <main className="content-wrapper">
         <div className="forms-column">
           <SpellForm onAddSpell={addSpell} showSuccess={showSuccess} />
@@ -220,7 +244,8 @@ const SpellCardGeneratorPage = () => {
           <p>{loadingMessage}</p>
         </div>
       )}
-    </div>
+      </div>
+    </PageContainer>
   );
 };
 

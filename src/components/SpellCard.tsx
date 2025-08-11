@@ -1,4 +1,5 @@
 import React from 'react';
+import FiligreeDivider from './FiligreeDivider';
 import type { Spell } from '../types';
 
 interface SpellCardProps {
@@ -63,12 +64,14 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, onDelete, isEditMode, onUp
             <EditableField value={spell.level} onChange={v => handleFieldChange('level', v)} isEditMode={isEditMode} placeholder="Nivel" />
           </div>
         </div>
+        <FiligreeDivider />
         <div className="card-details">
           <EditableField value={`Lanzamiento: ${spell.castingTime}`} onChange={v => handleFieldChange('castingTime', v.split(/:(.*)/s)[1] || '')} isEditMode={isEditMode} />
           <EditableField value={`Alcance: ${spell.range}`} onChange={v => handleFieldChange('range', v.split(/:(.*)/s)[1] || '')} isEditMode={isEditMode} />
           <EditableField value={`Componentes: ${spell.components}`} onChange={v => handleFieldChange('components', v.split(/:(.*)/s)[1] || '')} isEditMode={isEditMode} />
           <EditableField value={`Duración: ${spell.duration}`} onChange={v => handleFieldChange('duration', v.split(/:(.*)/s)[1] || '')} isEditMode={isEditMode} />
         </div>
+        <FiligreeDivider />
         <div className="card-body">
             <EditableField 
               value={spell.description} 
