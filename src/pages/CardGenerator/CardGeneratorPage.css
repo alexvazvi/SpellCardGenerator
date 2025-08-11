@@ -247,3 +247,30 @@
 .action-button-circular:hover {
   background-color: var(--color-accent-dark);
 }
+
+.pattern-selector {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.pattern-thumbnail {
+  width: 50px;
+  height: 50px;
+  border: 2px solid var(--color-accent);
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: var(--color-parchment-darker); /* Fallback color */
+  background-size: cover;
+  transition: all 0.2s ease;
+}
+
+.pattern-thumbnail:hover {
+  transform: scale(1.1);
+}
+
+.pattern-thumbnail.active {
+  border-color: var(--color-accent-dark);
+  box-shadow: 0 0 10px var(--color-accent-dark);
+  transform: scale(1.1);
+}

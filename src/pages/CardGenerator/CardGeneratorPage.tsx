@@ -287,9 +287,7 @@ const CardBackPreview = ({ cardProps }: { cardProps: any }) => {
       border: showBorder ? `10px solid ${borderColor}` : 'none',
       borderRadius: '15px',
       backgroundColor: frame ? 'transparent' : backBackgroundColor,
-      backgroundImage: `url(${backBackgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
+      position: 'relative', // Needed for the pseudo-element
       boxSizing: 'border-box',
       position: 'relative',
       zIndex: 2,
@@ -309,7 +307,17 @@ const CardBackPreview = ({ cardProps }: { cardProps: any }) => {
       }}>
           {frame && <img src={frame} alt="Card Frame" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1, objectFit: 'fill' }}/>}
           <div style={cardBaseStyle}>
-              {/* Content for the back can go here if needed later */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundImage: `url(${backBackgroundImage})`,
+                backgroundColor: cardProps.backPatternColor,
+                opacity: cardProps.backPatternOpacity,
+                zIndex: 3,
+              }}></div>
           </div>
       </div>
   )
@@ -326,7 +334,9 @@ function CardGeneratorPage() {
     backgroundColor: '#F5DEB3',
     backgroundImage: null as string | null,
     backBackgroundColor: '#8B4513',
-    backBackgroundImage: null as string | null,
+    backBackgroundImage: 'https://www.transparenttextures.com/patterns/leather.png',
+    backPatternColor: '#000000',
+    backPatternOpacity: 0.5,
   });
 
   const updateCardProps = (props: Partial<typeof cardProps>) => {
@@ -375,6 +385,21 @@ function CardGeneratorPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [smartGuides, setSmartGuides] = useState<{vertical: number | null, horizontal: number | null}>({ vertical: null, horizontal: null });
+
+  // State for back image
+  const [backImage, setBackImage] = useState<string | null>(null);
+  const [backImageSize, setBackImageSize] = useState({ width: 150, height: 150 });
+  const [backImageRotation, setBackImageRotation] = useState(0);
+
+  // Pattern options for card back
+  const backPatterns = [
+    { name: 'None', url: '' },
+    { name: 'Old Leather', url: 'https://www.transparenttextures.com/patterns/leather.png' },
+    { name: 'Dark Wood', url: 'https://www.transparenttextures.com/patterns/dark-wood.png' },
+    { name: 'Arcane Circles', url: 'https://www.transparenttextures.com/patterns/arches.png' },
+    { name: 'Parchment', url: 'https://www.transparenttextures.com/patterns/clean-gray-paper.png' },
+    { name: 'Dragon Scales', url: 'https://www.transparenttextures.com/patterns/gplay.png' },
+  ];
 
   // Frame options
   const availableFrames = [
@@ -517,6 +542,34 @@ function CardGeneratorPage() {
                     <label>Imagen Fondo (Trasera):</label>
                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (res) => updateCardProps({ backBackgroundImage: res }))} className="form-card-input"/>
                   </div>
+                  <div className="form-group">
+                    <label>Patrón de Fondo (Trasera):</label>
+                    <div className="pattern-selector">
+                      {backPatterns.map(pattern => (
+                        <div 
+                          key={pattern.name}
+                          className={`pattern-thumbnail ${cardProps.backBackgroundImage === pattern.url ? 'active' : ''}`}
+                          style={{ backgroundImage: pattern.url ? `url(${pattern.url})` : 'none', backgroundColor: !pattern.url ? 'var(--color-parchment-darker)' : 'transparent' }}
+                          onClick={() => updateCardProps({ backBackgroundImage: pattern.url })}
+                          title={pattern.name}
+                        >
+                          {!pattern.url && 'N/A'}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {cardProps.backBackgroundImage && (
+                    <>
+                      <div className="form-group">
+                        <label>Color del Patrón:</label>
+                        <input type="color" value={cardProps.backPatternColor} onChange={(e) => updateCardProps({ backPatternColor: e.target.value })} style={{width: '100%'}}/>
+                      </div>
+                      <div className="form-group">
+                        <label>Opacidad del Patrón ({Math.round(cardProps.backPatternOpacity * 100)}%):</label>
+                        <input type="range" min="0" max="1" step="0.05" value={cardProps.backPatternOpacity} onChange={(e) => updateCardProps({ backPatternOpacity: parseFloat(e.target.value) })} />
+                      </div>
+                    </>
+                  )}
                 </div>
               </details>
 
