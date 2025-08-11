@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import './CardGeneratorPage.css';
 
-// A simple generic card component for preview
 import { Rnd } from 'react-rnd';
+import tinycolor from 'tinycolor2';
 
 const GenericCardPreview = (
-    { borderColor, fontFamily, frame, image, onImageUpdate, imageSize, imageRotation, titleProps, descriptionProps, footerProps, onElementUpdate }:
+    { cardProps, image, onImageUpdate, imageSize, imageRotation, titleProps, descriptionProps, footerProps, onElementUpdate }:
     { 
-      borderColor: string, 
-      fontFamily: string, 
-      frame: string,
+      cardProps: any,
       image: string | null,
       onImageUpdate: (style: any, size: any) => void,
       imageSize: { width: number, height: number },
@@ -20,7 +18,20 @@ const GenericCardPreview = (
       onElementUpdate: (element: string, pos: any, size: any) => void
     }
 ) => {
+  const { frame, borderColor, backgroundColor, backgroundImage, fontFamily } = cardProps;
   const showBorder = !frame;
+
+  const getElementStyles = (props: any): React.CSSProperties => {
+    const styles: React.CSSProperties = {
+        zIndex: 4,
+        background: props.backgroundColor,
+    };
+    if (props.border?.active) {
+        styles.border = `${props.border.width}px solid ${props.border.color}`;
+        styles.borderRadius = props.border.style === 'rounded' ? '8px' : '0px';
+    }
+    return styles;
+  }
 
   const getTextStyles = (props: any): React.CSSProperties => {
     const styles: React.CSSProperties = {
@@ -35,16 +46,39 @@ const GenericCardPreview = (
         textAlign: 'center',
         overflow: 'hidden',
         lineHeight: 1.2,
-        color: 'inherit',
+        color: props.color,
         fontFamily: 'inherit'
     };
-    if (props.underline?.active) {
-        styles.borderBottom = `${props.underline.thickness}px solid ${props.underline.color}`;
-    }
     if (props.stroke?.active) {
         styles.WebkitTextStroke = `${props.stroke.width}px ${props.stroke.color}`;
     }
     return styles;
+  }
+
+  const textWrapper = (text: string, props: any) => {
+    if (props.highlight?.active) {
+      return (
+        <span style={{ backgroundColor: props.highlight.color, padding: '0.1em 0.2em', boxDecorationBreak: 'clone' }}>
+          {text}
+        </span>
+      );
+    }
+    return text;
+  }
+
+  const cardBaseStyle: React.CSSProperties = {
+      width: '100%',
+      height: '100%',
+      border: showBorder ? `10px solid ${borderColor}` : 'none',
+      borderRadius: '15px',
+      backgroundColor: frame ? 'transparent' : backgroundColor,
+      backgroundImage: frame ? 'none' : `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      fontFamily: fontFamily,
+      boxSizing: 'border-box',
+      position: 'relative',
+      zIndex: 2
   }
 
   return (
@@ -58,20 +92,8 @@ const GenericCardPreview = (
     }}>
       {frame && <img src={frame} alt="Card Frame" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1, objectFit: 'fill' }}/>}
       
-      <div style={{
-        width: '100%',
-        height: '100%',
-        border: showBorder ? `10px solid ${borderColor}` : 'none',
-        borderRadius: '15px',
-        backgroundColor: frame ? 'transparent' : '#F5DEB3',
-        fontFamily: fontFamily,
-        boxSizing: 'border-box',
-        position: 'relative',
-        zIndex: 2
-      }}>
-        {/* Container for all interactive elements */}
+      <div style={cardBaseStyle}>
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-
           {image && (
             <Rnd
                 style={{ zIndex: 3 }}
@@ -87,7 +109,7 @@ const GenericCardPreview = (
           )}
 
           <Rnd
-            style={{ zIndex: 4, background: titleProps.backgroundColor }}
+            style={getElementStyles(titleProps)}
             size={{ width: titleProps.width, height: titleProps.height }}
             position={{ x: titleProps.x, y: titleProps.y }}
             onDragStop={(_e, d) => onElementUpdate('title', { x: d.x, y: d.y }, {width: titleProps.width, height: titleProps.height})}
@@ -96,12 +118,12 @@ const GenericCardPreview = (
             className="interactive-element"
           >
             <h3 style={{ ...getTextStyles(titleProps), fontSize: '1.2em' }}>
-              {titleProps.text}
+              {textWrapper(titleProps.text, titleProps)}
             </h3>
           </Rnd>
 
           <Rnd
-            style={{ zIndex: 4, background: descriptionProps.backgroundColor }}
+            style={getElementStyles(descriptionProps)}
             size={{ width: descriptionProps.width, height: descriptionProps.height }}
             position={{ x: descriptionProps.x, y: descriptionProps.y }}
             onDragStop={(_e, d) => onElementUpdate('description', { x: d.x, y: d.y }, {width: descriptionProps.width, height: descriptionProps.height})}
@@ -109,13 +131,13 @@ const GenericCardPreview = (
             bounds="parent"
             className="interactive-element"
           >
-            <div style={{ ...getTextStyles(descriptionProps), fontSize: '0.9em', alignItems: 'flex-start', textAlign: 'left' }}>
-              {descriptionProps.text}
+            <div style={{ ...getTextStyles(descriptionProps), fontSize: '0.9em', alignItems: 'flex-start', textAlign: 'left', whiteSpace: 'pre-wrap' }}>
+               {textWrapper(descriptionProps.text, descriptionProps)}
             </div>
           </Rnd>
           
           <Rnd
-            style={{ zIndex: 4, background: footerProps.backgroundColor }}
+            style={getElementStyles(footerProps)}
             size={{ width: footerProps.width, height: footerProps.height }}
             position={{ x: footerProps.x, y: footerProps.y }}
             onDragStop={(_e, d) => onElementUpdate('footer', { x: d.x, y: d.y }, {width: footerProps.width, height: footerProps.height})}
@@ -124,7 +146,7 @@ const GenericCardPreview = (
             className="interactive-element"
           >
             <footer style={{ ...getTextStyles(footerProps), fontSize: '0.8em' }}>
-              {footerProps.text}
+              {textWrapper(footerProps.text, footerProps)}
             </footer>
           </Rnd>
 
@@ -134,29 +156,88 @@ const GenericCardPreview = (
   );
 };
 
+const CardBackPreview = ({ cardProps }: { cardProps: any }) => {
+  const { frame, borderColor, backBackgroundColor, backBackgroundImage } = cardProps;
+  const showBorder = !frame;
+
+  const cardBaseStyle: React.CSSProperties = {
+      width: '100%',
+      height: '100%',
+      border: showBorder ? `10px solid ${borderColor}` : 'none',
+      borderRadius: '15px',
+      backgroundColor: frame ? 'transparent' : backBackgroundColor,
+      backgroundImage: `url(${backBackgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      boxSizing: 'border-box',
+      position: 'relative',
+      zIndex: 2,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+  }
+
+  return (
+      <div style={{
+          width: '320px',
+          height: '450px',
+          position: 'relative',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+          borderRadius: '15px',
+      }}>
+          {frame && <img src={frame} alt="Card Frame" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1, objectFit: 'fill' }}/>}
+          <div style={cardBaseStyle}>
+              {/* Content for the back can go here if needed later */}
+          </div>
+      </div>
+  )
+}
+
 
 function CardGeneratorPage() {
-  // Element properties state
-  const [titleProps, setTitleProps] = useState({ 
-    text: 'Título de la Carta', x: 40, y: 20, width: 240, height: 50, backgroundColor: 'rgba(0,0,0,0)',
-    underline: { active: false, color: '#000000', thickness: 2 },
-    stroke: { active: false, color: '#000000', width: 1 }
-  });
-  const [descriptionProps, setDescriptionProps] = useState({ 
-    text: 'Esta es la descripción de la carta. Puedes escribir aquí los detalles del item o conjuro.', x: 30, y: 250, width: 260, height: 120, backgroundColor: 'rgba(0,0,0,0)',
-    underline: { active: false, color: '#000000', thickness: 2 },
-    stroke: { active: false, color: '#000000', width: 1 }
-  });
-  const [footerProps, setFooterProps] = useState({
-    text: 'Texto de pie de página', x: 30, y: 380, width: 260, height: 40, backgroundColor: 'rgba(0,0,0,0)',
-    underline: { active: false, color: '#000000', thickness: 2 },
-    stroke: { active: false, color: '#000000', width: 1 }
+  // Card properties state
+  const [cardProps, setCardProps] = useState({
+    borderColor: '#8B4513',
+    fontFamily: 'serif',
+    frame: '',
+    backgroundColor: '#F5DEB3',
+    backgroundImage: null as string | null,
+    backBackgroundColor: '#8B4513',
+    backBackgroundImage: null as string | null,
   });
 
-  // Card style state
-  const [borderColor, setBorderColor] = useState('#8B4513'); // SaddleBrown
-  const [fontFamily, setFontFamily] = useState('serif');
-  const [selectedFrame, setSelectedFrame] = useState('');
+  const updateCardProps = (props: Partial<typeof cardProps>) => {
+    setCardProps(prev => ({ ...prev, ...props }));
+  };
+
+  const defaultBorderColor = tinycolor(cardProps.borderColor).darken(20).toString();
+
+  // Element properties state
+  const [titleProps, setTitleProps] = useState({ 
+    text: 'Título de la Carta', x: 40, y: 20, width: 240, height: 50,
+    color: '#000000',
+    backgroundColor: 'rgba(0,0,0,0)',
+    highlight: { active: false, color: '#ffff00' },
+    stroke: { active: false, color: '#000000', width: 1 },
+    border: { active: false, style: 'rounded', width: 2, color: defaultBorderColor }
+  });
+  const [descriptionProps, setDescriptionProps] = useState({ 
+    text: 'Esta es la descripción de la carta. Puedes escribir aquí los detalles del item o conjuro.', x: 30, y: 250, width: 260, height: 120,
+    color: '#000000',
+    backgroundColor: 'rgba(0,0,0,0)',
+    highlight: { active: false, color: '#ffff00' },
+    stroke: { active: false, color: '#000000', width: 1 },
+    border: { active: false, style: 'rounded', width: 2, color: defaultBorderColor }
+  });
+  const [footerProps, setFooterProps] = useState({
+    text: 'Texto de pie de página', x: 30, y: 380, width: 260, height: 40,
+    color: '#000000',
+    backgroundColor: 'rgba(0,0,0,0)',
+    highlight: { active: false, color: '#ffff00' },
+    stroke: { active: false, color: '#000000', width: 1 },
+    border: { active: false, style: 'rounded', width: 2, color: defaultBorderColor }
+  });
 
   // Image state
   const [image, setImage] = useState<string | null>(null);
@@ -171,16 +252,17 @@ function CardGeneratorPage() {
     { name: 'Marco Enano', value: '/frames/dwarven-frame.png' },
   ];
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, callback: (result: string) => void) => {
     if (event.target.files && event.target.files[0]) {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target && e.target.result) {
-          setImage(e.target.result as string);
+          callback(e.target.result as string);
         }
       };
       reader.readAsDataURL(event.target.files[0]);
     }
+    event.target.value = ''; // Reset file input
   };
 
   const handleImageUpdate = (_pos: any, size: any) => {
@@ -223,35 +305,52 @@ function CardGeneratorPage() {
           <div className="card-body" style={{overflowY: 'auto', maxHeight: 'calc(100vh - 120px)'}}>
             
             <details className="accordion-item" open>
-              <summary className="accordion-header">Estilos Generales</summary>
+              <summary className="accordion-header">Estilos de Carta</summary>
               <div className="accordion-content">
                 <div className="form-group">
                   <label>Fuente:</label>
-                  <select value={fontFamily} onChange={(e) => setFontFamily(e.target.value)} className="form-card-input">
+                  <select value={cardProps.fontFamily} onChange={(e) => updateCardProps({ fontFamily: e.target.value })} className="form-card-input">
                     <option value="serif">Serif (Clásica)</option>
                     <option value="sans-serif">Sans-Serif (Moderna)</option>
                     <option value="fantasy">Fantasy (Fantasía)</option>
+                    <option value="'Cinzel', serif">Cinzel (Épica)</option>
                   </select>
                 </div>
                 <div className="form-group">
                   <label>Marco (Imagen):</label>
-                  <select value={selectedFrame} onChange={(e) => setSelectedFrame(e.target.value)} className="form-card-input">
+                  <select value={cardProps.frame} onChange={(e) => updateCardProps({ frame: e.target.value })} className="form-card-input">
                     {availableFrames.map(frame => (<option key={frame.value} value={frame.value}>{frame.name}</option>))}
                   </select>
                 </div>
                  <div className="form-group">
                   <label>Color Borde (si no hay marco):</label>
-                  <input type="color" value={borderColor} onChange={(e) => setBorderColor(e.target.value)} style={{width: '100%'}}/>
+                  <input type="color" value={cardProps.borderColor} onChange={(e) => updateCardProps({ borderColor: e.target.value })} style={{width: '100%'}}/>
+                </div>
+                <div className="form-group">
+                  <label>Color Fondo (Frontal):</label>
+                  <input type="color" value={cardProps.backgroundColor} onChange={(e) => updateCardProps({ backgroundColor: e.target.value })} style={{width: '100%'}}/>
+                </div>
+                <div className="form-group">
+                  <label>Imagen Fondo (Frontal):</label>
+                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (res) => updateCardProps({ backgroundImage: res }))} className="form-card-input"/>
+                </div>
+                <div className="form-group">
+                  <label>Color Fondo (Trasera):</label>
+                  <input type="color" value={cardProps.backBackgroundColor} onChange={(e) => updateCardProps({ backBackgroundColor: e.target.value })} style={{width: '100%'}}/>
+                </div>
+                <div className="form-group">
+                  <label>Imagen Fondo (Trasera):</label>
+                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (res) => updateCardProps({ backBackgroundImage: res }))} className="form-card-input"/>
                 </div>
               </div>
             </details>
 
             <details className="accordion-item">
-              <summary className="accordion-header">Imagen</summary>
+              <summary className="accordion-header">Imagen Principal</summary>
               <div className="accordion-content">
                 <div className="form-group">
                   <label>Cargar Imagen:</label>
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="form-card-input"/>
+                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setImage)} className="form-card-input"/>
                 </div>
                 {image && (<>
                   <div className="form-group">
@@ -269,26 +368,23 @@ function CardGeneratorPage() {
             {/* Repetir para Título, Descripción y Pie de Página */}
             {/* Ejemplo para Título */}
             <details className="accordion-item">
-              <summary className="accordion-header">Título</summary>
+              <summary className="accordion-header">Elemento: Título</summary>
               <div className="accordion-content">
                 <div className="form-group">
                   <label>Texto:</label>
                   <input type="text" value={titleProps.text} onChange={(e) => setTitleProps(p => ({...p, text: e.target.value}))} className="form-card-input" />
                 </div>
                 <div className="form-group color-group">
-                  <label>Color de Fondo:</label>
-                  <div>
-                    <input type="color" value={titleProps.backgroundColor} onChange={(e) => setTitleProps(p => ({...p, backgroundColor: e.target.value}))} />
-                    <button type="button" onClick={() => setTitleProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular">T</button>
-                  </div>
+                  <label>Color Texto:</label>
+                  <input type="color" value={titleProps.color} onChange={(e) => setTitleProps(p => ({...p, color: e.target.value}))} />
+                  <label>Fondo:</label>
+                  <input type="color" value={titleProps.backgroundColor} onChange={(e) => setTitleProps(p => ({...p, backgroundColor: e.target.value}))} />
+                  <button type="button" onClick={() => setTitleProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular" title="Fondo transparente">T</button>
                 </div>
                 <div className="form-group inline-group">
-                  <input type="checkbox" id="titleUnderline" checked={titleProps.underline.active} onChange={e => setTitleProps(p => ({...p, underline: {...p.underline, active: e.target.checked}}))} />
-                  <label htmlFor="titleUnderline">Subrayado</label>
-                  {titleProps.underline.active && <>
-                    <input type="color" value={titleProps.underline.color} onChange={e => setTitleProps(p => ({...p, underline: {...p.underline, color: e.target.value}}))} />
-                    <input type="number" min="1" max="10" value={titleProps.underline.thickness} onChange={e => setTitleProps(p => ({...p, underline: {...p.underline, thickness: parseInt(e.target.value)}}))} />px
-                  </>}
+                  <input type="checkbox" id="titleHighlight" checked={titleProps.highlight.active} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
+                  <label htmlFor="titleHighlight">Resaltado</label>
+                  {titleProps.highlight.active && <input type="color" value={titleProps.highlight.color} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                 </div>
                 <div className="form-group inline-group">
                   <input type="checkbox" id="titleStroke" checked={titleProps.stroke.active} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
@@ -298,29 +394,38 @@ function CardGeneratorPage() {
                     <input type="number" min="1" max="10" value={titleProps.stroke.width} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
                   </>}
                 </div>
+                <div className="form-group inline-group">
+                  <input type="checkbox" id="titleBorder" checked={titleProps.border.active} onChange={e => setTitleProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
+                  <label htmlFor="titleBorder">Borde de Caja</label>
+                  {titleProps.border.active && <>
+                    <input type="color" value={titleProps.border.color} onChange={e => setTitleProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
+                    <input type="number" min="1" max="10" value={titleProps.border.width} onChange={e => setTitleProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
+                    <select value={titleProps.border.style} onChange={e => setTitleProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
+                      <option value="rounded">Redondo</option>
+                      <option value="square">Cuadrado</option>
+                    </select>
+                  </>}
+                </div>
               </div>
             </details>
             <details className="accordion-item">
-              <summary className="accordion-header">Descripción</summary>
+              <summary className="accordion-header">Elemento: Descripción</summary>
               <div className="accordion-content">
                 <div className="form-group">
                   <label>Texto:</label>
                   <textarea value={descriptionProps.text} onChange={(e) => setDescriptionProps(p => ({...p, text: e.target.value}))} rows={4} className="form-card-textarea"/>
                 </div>
                 <div className="form-group color-group">
-                  <label>Color de Fondo:</label>
-                  <div>
-                    <input type="color" value={descriptionProps.backgroundColor} onChange={(e) => setDescriptionProps(p => ({...p, backgroundColor: e.target.value}))} />
-                    <button type="button" onClick={() => setDescriptionProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular">T</button>
-                  </div>
+                  <label>Color Texto:</label>
+                  <input type="color" value={descriptionProps.color} onChange={(e) => setDescriptionProps(p => ({...p, color: e.target.value}))} />
+                  <label>Fondo:</label>
+                  <input type="color" value={descriptionProps.backgroundColor} onChange={(e) => setDescriptionProps(p => ({...p, backgroundColor: e.target.value}))} />
+                  <button type="button" onClick={() => setDescriptionProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular" title="Fondo transparente">T</button>
                 </div>
-                 <div className="form-group inline-group">
-                  <input type="checkbox" id="descUnderline" checked={descriptionProps.underline.active} onChange={e => setDescriptionProps(p => ({...p, underline: {...p.underline, active: e.target.checked}}))} />
-                  <label htmlFor="descUnderline">Subrayado</label>
-                  {descriptionProps.underline.active && <>
-                    <input type="color" value={descriptionProps.underline.color} onChange={e => setDescriptionProps(p => ({...p, underline: {...p.underline, color: e.target.value}}))} />
-                    <input type="number" min="1" max="10" value={descriptionProps.underline.thickness} onChange={e => setDescriptionProps(p => ({...p, underline: {...p.underline, thickness: parseInt(e.target.value)}}))} />px
-                  </>}
+                <div className="form-group inline-group">
+                  <input type="checkbox" id="descHighlight" checked={descriptionProps.highlight.active} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
+                  <label htmlFor="descHighlight">Resaltado</label>
+                  {descriptionProps.highlight.active && <input type="color" value={descriptionProps.highlight.color} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                 </div>
                 <div className="form-group inline-group">
                   <input type="checkbox" id="descStroke" checked={descriptionProps.stroke.active} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
@@ -330,29 +435,38 @@ function CardGeneratorPage() {
                     <input type="number" min="1" max="10" value={descriptionProps.stroke.width} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
                   </>}
                 </div>
+                 <div className="form-group inline-group">
+                  <input type="checkbox" id="descBorder" checked={descriptionProps.border.active} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
+                  <label htmlFor="descBorder">Borde de Caja</label>
+                  {descriptionProps.border.active && <>
+                    <input type="color" value={descriptionProps.border.color} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
+                    <input type="number" min="1" max="10" value={descriptionProps.border.width} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
+                    <select value={descriptionProps.border.style} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
+                      <option value="rounded">Redondo</option>
+                      <option value="square">Cuadrado</option>
+                    </select>
+                  </>}
+                </div>
               </div>
             </details>
             <details className="accordion-item">
-              <summary className="accordion-header">Pie de Página</summary>
+              <summary className="accordion-header">Elemento: Pie de Página</summary>
               <div className="accordion-content">
                 <div className="form-group">
                   <label>Texto:</label>
                   <input type="text" value={footerProps.text} onChange={(e) => setFooterProps(p => ({...p, text: e.target.value}))} className="form-card-input" />
                 </div>
                 <div className="form-group color-group">
-                  <label>Color de Fondo:</label>
-                  <div>
-                    <input type="color" value={footerProps.backgroundColor} onChange={(e) => setFooterProps(p => ({...p, backgroundColor: e.target.value}))} />
-                    <button type="button" onClick={() => setFooterProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular">T</button>
-                  </div>
+                  <label>Color Texto:</label>
+                  <input type="color" value={footerProps.color} onChange={(e) => setFooterProps(p => ({...p, color: e.target.value}))} />
+                  <label>Fondo:</label>
+                  <input type="color" value={footerProps.backgroundColor} onChange={(e) => setFooterProps(p => ({...p, backgroundColor: e.target.value}))} />
+                  <button type="button" onClick={() => setFooterProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular" title="Fondo transparente">T</button>
                 </div>
                 <div className="form-group inline-group">
-                  <input type="checkbox" id="footerUnderline" checked={footerProps.underline.active} onChange={e => setFooterProps(p => ({...p, underline: {...p.underline, active: e.target.checked}}))} />
-                  <label htmlFor="footerUnderline">Subrayado</label>
-                  {footerProps.underline.active && <>
-                    <input type="color" value={footerProps.underline.color} onChange={e => setFooterProps(p => ({...p, underline: {...p.underline, color: e.target.value}}))} />
-                    <input type="number" min="1" max="10" value={footerProps.underline.thickness} onChange={e => setFooterProps(p => ({...p, underline: {...p.underline, thickness: parseInt(e.target.value)}}))} />px
-                  </>}
+                  <input type="checkbox" id="footerHighlight" checked={footerProps.highlight.active} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
+                  <label htmlFor="footerHighlight">Resaltado</label>
+                  {footerProps.highlight.active && <input type="color" value={footerProps.highlight.color} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                 </div>
                 <div className="form-group inline-group">
                   <input type="checkbox" id="footerStroke" checked={footerProps.stroke.active} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
@@ -362,17 +476,27 @@ function CardGeneratorPage() {
                     <input type="number" min="1" max="10" value={footerProps.stroke.width} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
                   </>}
                 </div>
+                 <div className="form-group inline-group">
+                  <input type="checkbox" id="footerBorder" checked={footerProps.border.active} onChange={e => setFooterProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
+                  <label htmlFor="footerBorder">Borde de Caja</label>
+                  {footerProps.border.active && <>
+                    <input type="color" value={footerProps.border.color} onChange={e => setFooterProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
+                    <input type="number" min="1" max="10" value={footerProps.border.width} onChange={e => setFooterProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
+                     <select value={footerProps.border.style} onChange={e => setFooterProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
+                      <option value="rounded">Redondo</option>
+                      <option value="square">Cuadrado</option>
+                    </select>
+                  </>}
+                </div>
               </div>
             </details>
 
           </div>
         </div>
       </aside>
-      <main className="preview-panel content-wrapper">
+      <main className="preview-panel content-wrapper" style={{ display: 'flex', gap: '2rem', alignItems: 'center', justifyContent: 'center' }}>
         <GenericCardPreview 
-          borderColor={borderColor}
-          fontFamily={fontFamily}
-          frame={selectedFrame}
+          cardProps={cardProps}
           image={image}
           onImageUpdate={handleImageUpdate}
           imageSize={imageSize}
@@ -382,6 +506,7 @@ function CardGeneratorPage() {
           footerProps={footerProps}
           onElementUpdate={handleElementUpdate}
         />
+        <CardBackPreview cardProps={cardProps} />
       </main>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'animate.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './SpellCardGeneratorPage.css';
@@ -11,28 +11,41 @@ import JsonImport from '../../components/JsonImport';
 import Pagination from '../../components/Pagination';
 
 const SpellCardGeneratorPage = () => {
-  const [spells, setSpells] = useState([
-    {
-      name: 'Bola de Fuego',
-      level: '3',
-      school: 'Evocación',
-      castingTime: '1 acción',
-      range: '150 pies',
-      components: 'V, S, M',
-      duration: 'Instantánea',
-      description: 'Una explosión de llamas rugientes estalla en un punto de tu elección dentro del alcance. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Recibe 8d6 de daño por fuego si falla, o la mitad si tiene éxito.'
-    },
-    {
-      name: 'Rayo de Escarcha',
-      level: '0 (Truco)',
-      school: 'Evocación',
-      castingTime: '1 acción',
-      range: '60 pies',
-      components: 'V, S',
-      duration: 'Instantánea',
-      description: 'Un rayo de energía gélida se proyecta hacia una criatura dentro del alcance. Haz un ataque de hechizo a distancia contra el objetivo. Si impactas, el objetivo recibe 1d8 de daño por frío y su velocidad se reduce en 10 pies hasta el comienzo de tu siguiente turno.'
-    },
-  ]);
+  const [spells, setSpells] = useState<Spell[]>(() => {
+    try {
+      const savedSpells = localStorage.getItem('spells');
+      if (savedSpells) {
+        const parsedSpells = JSON.parse(savedSpells);
+        if (Array.isArray(parsedSpells) && parsedSpells.length > 0) {
+          return parsedSpells;
+        }
+      }
+    } catch (error) {
+      console.error("Error reading spells from localStorage:", error);
+    }
+    return [
+      {
+        name: 'Bola de Fuego',
+        level: '3',
+        school: 'Evocación',
+        castingTime: '1 acción',
+        range: '150 pies',
+        components: 'V, S, M',
+        duration: 'Instantánea',
+        description: 'Una explosión de llamas rugientes estalla en un punto de tu elección dentro del alcance. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Recibe 8d6 de daño por fuego si falla, o la mitad si tiene éxito.'
+      },
+      {
+        name: 'Rayo de Escarcha',
+        level: '0 (Truco)',
+        school: 'Evocación',
+        castingTime: '1 acción',
+        range: '60 pies',
+        components: 'V, S',
+        duration: 'Instantánea',
+        description: 'Un rayo de energía gélida se proyecta hacia una criatura dentro del alcance. Haz un ataque de hechizo a distancia contra el objetivo. Si impactas, el objetivo recibe 1d8 de daño por frío y su velocidad se reduce en 10 pies hasta el comienzo de tu siguiente turno.'
+      },
+    ];
+  });
   const [showSuccess, setShowSuccess] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,6 +54,14 @@ const SpellCardGeneratorPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
   const spellsPerPage = 12; // Reduced to 12 for a 3-column layout (3x4)
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('spells', JSON.stringify(spells));
+    } catch (error) {
+      console.error("Error saving spells to localStorage:", error);
+    }
+  }, [spells]);
 
   const addSpell = (spell: Spell) => {
     setSpells(prevSpells => [...prevSpells, spell]);
