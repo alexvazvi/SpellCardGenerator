@@ -47,11 +47,11 @@ const GenericCardPreview = (
         height: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'center', /* Re-center the content within the draggable box */
         margin: 0,
         padding: '5px',
         boxSizing: 'border-box',
-        textAlign: 'center',
+        textAlign: 'center', /* Re-center the text itself */
         overflow: 'hidden',
         lineHeight: 1.2,
         color: props.color,
@@ -109,7 +109,7 @@ const GenericCardPreview = (
           />
         )}
   
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div className="card-content-area">
             {smartGuides.vertical && <div className="smart-guide vertical" style={{ left: smartGuides.vertical }}></div>}
             {smartGuides.horizontal && <div className="smart-guide horizontal" style={{ top: smartGuides.horizontal }}></div>}
 
@@ -508,10 +508,7 @@ function CardGeneratorPage() {
                     <label>Color Fondo (Frontal):</label>
                     <input type="color" value={cardProps.backgroundColor} onChange={(e) => updateCardProps({ backgroundColor: e.target.value })} style={{width: '100%'}}/>
                   </div>
-                  <div className="form-group">
-                    <label>Imagen Fondo (Frontal):</label>
-                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (res) => updateCardProps({ backgroundImage: res }))} className="form-card-input"/>
-                  </div>
+
                   <div className="form-group">
                     <label>Color Fondo (Trasera):</label>
                     <input type="color" value={cardProps.backBackgroundColor} onChange={(e) => updateCardProps({ backBackgroundColor: e.target.value })} style={{width: '100%'}}/>

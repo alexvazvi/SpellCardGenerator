@@ -1,7 +1,8 @@
 .profile-page {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column; /* Arrange content vertically */
+  align-items: center;    /* Center content horizontally */
+  width: 100%;
 }
 
 .profile-card {
