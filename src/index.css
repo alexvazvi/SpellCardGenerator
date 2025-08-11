@@ -1,0 +1,56 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto+Slab:wght@400;700&display=swap');
+
+:root {
+  /* Define our main fonts */
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Roboto Slab', serif;
+  
+  /* Define core colors */
+  --color-text: #3a2e28;
+  --color-background: #1e1815;
+  --color-parchment: #fdf5e6;
+  --color-parchment-darker: #f0e6d2;
+  --color-accent: #8c6d3f;
+  --color-accent-dark: #7c5c2b;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+  background-attachment: fixed; /* The background doesn't scroll with content */
+}
+
+/* Remove default Vite button styling */
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: inherit;
+}
+button:focus,
+button:focus-visible {
+  outline: 2px auto var(--color-accent);
+}
+
+/* General layout */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}

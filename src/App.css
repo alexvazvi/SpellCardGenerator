@@ -1,0 +1,102 @@
+/* === Main Layout & Theming === */
+.main-container { width: 100%; max-width: 1600px; margin: 0 auto; padding: clamp(1rem, 5vw, 4rem); background: var(--color-parchment); border: 10px solid; border-image-slice: 1; border-image-source: linear-gradient(to bottom right, #a08055, #604028); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(0, 0, 0, 0.2); }
+.content-wrapper { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+@media (min-width: 1024px) { .content-wrapper { grid-template-columns: 40% 60%; } }
+.forms-column { display: flex; flex-direction: column; gap: 2rem; max-width: 500px; margin: 0 auto; width: 100%; }
+
+/* === Dark Mode === */
+.dark-mode { --color-parchment: #2c221e; --color-parchment-darker: #1a1411; --color-text: #c5bba8; --color-accent: #a88a5c; --color-accent-dark: #c1a37c; }
+.dark-mode .main-container { border-image-source: linear-gradient(to bottom right, var(--color-accent), #a08055); }
+.dark-mode .app-title, .dark-mode .card-title, .dark-mode .card-details strong, .dark-mode .spell-form-title, .dark-mode .app-subtitle, .dark-mode .spell-count, .dark-mode .pagination-button, .dark-mode .form-label { color: #e7d7b1; }
+.dark-mode .app-title, .dark-mode .card-title { text-shadow: none; }
+
+/* === Header & Actions === */
+.app-header { width: 100%; text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid; border-image: linear-gradient(to right, transparent, var(--color-accent), transparent) 1; }
+.app-title { font-family: var(--font-display); font-size: clamp(3rem, 10vw, 5rem); font-weight: 700; color: var(--color-accent-dark); text-shadow: 2px 2px 5px rgba(0,0,0,0.2); margin: 0; }
+.app-subtitle { font-size: 1.1rem; font-style: italic; margin: 0.5rem 0 1.5rem 0; color: var(--color-text); opacity: 0.9; }
+.actions-toolbar { display: flex; gap: 1rem; justify-content: center; }
+.action-button { background-color: var(--color-accent); color: var(--color-parchment); width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--color-accent-dark); box-shadow: 0 4px 8px rgba(0,0,0,0.2); font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+.action-button:hover { background-color: var(--color-accent-dark); transform: translateY(-3px) scale(1.05); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+.dark-mode .action-button { background-color: var(--color-parchment); color: var(--color-accent-dark); border-color: var(--color-parchment-darker); }
+.dark-mode .action-button:hover { background-color: #fff; }
+
+/* === Grimorio / Card List === */
+.card-list-header { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--color-accent); }
+.search-bar { position: relative; }
+.search-icon { position: absolute; top: 50%; left: 15px; transform: translateY(-50%); color: var(--color-accent); opacity: 0.8; }
+.search-input { width: 100%; box-sizing: border-box; padding: 0.8rem 1rem 0.8rem 2.5rem; font-family: var(--font-body); font-size: 1em; background-color: rgba(0,0,0,0.04); border: 2px solid var(--color-accent); border-radius: 50px; color: var(--color-text); transition: all 0.3s ease; }
+.search-input:focus { outline: none; border-color: var(--color-accent-dark); box-shadow: 0 0 10px var(--color-accent); }
+.spell-count-and-edit { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.spell-count { text-align: left; font-style: italic; opacity: 0.8; }
+.action-button-circular { background-color: var(--color-accent); color: var(--color-parchment); width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--color-accent-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.15); font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+.action-button-circular:hover { background-color: var(--color-accent-dark); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.dark-mode .action-button-circular { background-color: var(--color-parchment); color: var(--color-accent-dark); border-color: var(--color-parchment-darker); }
+.dark-mode .action-button-circular:hover { background-color: #fff; }
+.card-container { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+@media (min-width: 768px) { .card-container { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1280px) { .card-container { grid-template-columns: repeat(3, 1fr); } }
+
+/* === Spell Card Visuals === */
+.card-wrapper { position: relative; }
+.card { width: 100%; aspect-ratio: 63 / 88; border: 2px solid var(--color-accent-dark); border-radius: 14px; padding: 1rem; box-sizing: border-box; background: linear-gradient(135deg, var(--color-parchment), var(--color-parchment-darker)); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; position: relative; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; font-family: var(--font-body); overflow: hidden; }
+.card:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25); z-index: 2; }
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 3px solid var(--color-accent); border-radius: 14px; pointer-events: none; box-shadow: 0 0 0 2px var(--color-parchment) inset; }
+.card-header { text-align: center; padding-bottom: 0.5rem; margin-bottom: 0.5rem; border-bottom: 1.5px solid var(--color-accent); position: relative; }
+.card-title { font-family: var(--font-display); font-size: 1.1em; font-weight: 700; text-transform: uppercase; margin: 0; line-height: 1.2; color: var(--color-accent-dark); }
+.card-level { font-size: 0.8em; margin: 0; line-height: 1; color: var(--color-text); font-style: italic; opacity: 0.8; }
+.card-details { display: grid; grid-template-columns: 1fr 1fr; font-size: 0.7em; margin-bottom: 0.5rem; line-height: 1.2; border-bottom: 1.5px solid var(--color-accent); padding-bottom: 0.25rem; }
+.card-details div { padding: 0.1rem 0; border-bottom: 1px dashed rgba(0,0,0,0.1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-details div:nth-child(odd) { padding-right: 0.5rem; }
+.card-details div:nth-child(even) { padding-left: 0.5rem; }
+.card-details strong { font-weight: 700; color: var(--color-accent-dark); }
+.card-body { font-size: 0.75em; line-height: 1.4; flex-grow: 1; overflow-y: auto; text-align: justify; margin-top: 0.25rem; color: var(--color-text); }
+.card-body p { margin: 0.25rem 0; }
+.card-footer { font-size: 0.6em; text-align: center; border-top: 1.5px solid var(--color-accent); padding-top: 0.25rem; color: var(--color-text); font-family: var(--font-display); font-weight: 400; letter-spacing: 1px; opacity: 0.7; }
+.delete-button { position: absolute; top: -10px; right: -10px; background-color: #9e2b2b; color: white; border: 2px solid var(--color-parchment); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: all 0.2s ease-in-out; opacity: 0; transform: scale(0.8); z-index: 5; }
+.card-wrapper:hover .delete-button { opacity: 1; transform: scale(1); }
+.delete-button:hover { background-color: #c0392b; transform: scale(1.1) rotate(15deg); }
+
+/* === Form-as-Card & Import Styles === */
+.spell-form-as-card { width: 100%; border: 2px solid var(--color-accent-dark); border-radius: 14px; padding: 1rem; box-sizing: border-box; background: linear-gradient(135deg, var(--color-parchment), var(--color-parchment-darker)); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; position: relative; font-family: var(--font-body); }
+.spell-form-as-card .card-footer { border-top: none; padding-top: 1rem; }
+.spell-form-as-card .card-details div { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; } /* FIX: Ensures input fields are visible */
+.form-card-input, .form-card-textarea, .form-card-input-inline { background: rgba(0,0,0,0.05); border: 1px dashed var(--color-accent); border-radius: 4px; color: var(--color-text); font-family: inherit; font-size: inherit; padding: 0.2rem 0.4rem; width: 100%; box-sizing: border-box; }
+.dark-mode .form-card-input, .dark-mode .form-card-textarea, .dark-mode .form-card-input-inline { background: rgba(255,255,255,0.08); border-color: var(--color-accent); color: var(--color-text); }
+.form-card-input::placeholder, .form-card-textarea::placeholder, .form-card-input-inline::placeholder { color: var(--color-accent); opacity: 0.6; }
+.form-card-input.card-title { font-family: var(--font-display); font-size: 1.1em; font-weight: 700; text-transform: uppercase; text-align: center; margin-bottom: 0.2rem; }
+.form-card-input-inline { width: auto; display: inline-block; text-align: center; }
+.form-card-textarea { width: 100%; min-height: 120px; resize: vertical; line-height: 1.4; font-size: 0.75em; padding: 0.5rem; }
+.form-success-message { text-align: center; margin-top: 1rem; color: #27ae60; font-weight: bold; }
+.spell-form-button { margin-top: 1rem; width: 100%; background: var(--color-accent-dark); color: var(--color-parchment); font-family: var(--font-display); font-size: 1.25em; font-weight: 700; padding: 0.75rem 1rem; border: 1px solid var(--color-accent); border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+.spell-form-button:hover { background: var(--color-accent); transform: translateY(-2px); }
+#json-import-area.detailed-placeholder { background-color: #fffdf5; border: 1px dashed var(--color-accent); border-radius: 14px; padding: 0.5rem; } /* FIX: Added border-radius and consistent styling */
+.dark-mode #json-import-area.detailed-placeholder { background-color: #3a2e28; border-color: var(--color-accent-dark); }
+.textarea-wrapper { position: relative; }
+.copy-button { position: absolute; top: 10px; right: 10px; background-color: var(--color-accent); color: var(--color-parchment); border: 1px solid var(--color-accent-dark); border-radius: 6px; padding: 0.3rem 0.6rem; font-family: var(--font-body); font-size: 0.8em; cursor: pointer; transition: all 0.2s ease-in-out; opacity: 0.7; }
+.copy-button:hover { opacity: 1; background-color: var(--color-accent-dark); transform: scale(1.05); }
+.dark-mode .copy-button { background-color: var(--color-parchment); color: var(--color-accent-dark); border-color: var(--color-accent); }
+.detailed-placeholder::placeholder { color: var(--color-accent); opacity: 0.6; font-size: 0.9em; }
+
+/* === Edit Mode Styles === */
+@keyframes subtle-pulse { 0% { box-shadow: 0 0 0 0 rgba(193, 163, 124, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(193, 163, 124, 0); } 100% { box-shadow: 0 0 0 0 rgba(193, 163, 124, 0); } }
+.card-wrapper.edit-mode .card { border: 3px solid var(--color-accent-dark); cursor: text; animation: subtle-pulse 2s infinite; }
+.dark-mode .card-wrapper.edit-mode .card { border-color: #e7d7b1; }
+.editable-input, .editable-textarea { background: transparent; border: none; font-family: inherit; font-size: inherit; font-weight: inherit; color: inherit; padding: 0; margin: 0; width: 100%; border-bottom: 1px dashed rgba(0,0,0,0.2); transition: all 0.2s; }
+.editable-input:focus, .editable-textarea:focus { outline: none; border-bottom: 1px solid var(--color-accent-dark); background-color: rgba(0,0,0,0.05); }
+.editable-textarea { resize: vertical; min-height: 100px; padding: 0.5rem; } /* Added padding for better editing */
+.dark-mode .editable-input, .dark-mode .editable-textarea { border-bottom-color: rgba(255,255,255,0.2); }
+.dark-mode .editable-input:focus, .dark-mode .editable-textarea:focus { border-bottom-color: #ffc107; background-color: rgba(255,255,255,0.08); }
+.edit-mode .card-level { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+.edit-mode .level-separator { display: none; }
+
+/* === Pagination & Loading === */
+.pagination-container { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 2rem; }
+.pagination-button { background-color: transparent; border: 2px solid var(--color-accent); color: var(--color-accent-dark); font-family: var(--font-display); font-weight: 700; border-radius: 8px; min-width: 40px; height: 40px; padding: 0 0.5rem; transition: all 0.2s ease-in-out; }
+.pagination-button:hover:not(:disabled) { background-color: var(--color-accent); color: var(--color-parchment); }
+.pagination-button.active { background-color: var(--color-accent-dark); color: var(--color-parchment); border-color: var(--color-accent-dark); }
+.pagination-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.dark-mode .pagination-button:hover:not(:disabled) { background-color: var(--color-accent); color: var(--color-accent-dark); }
+.dark-mode .pagination-button.active { background-color: var(--color-parchment); color: var(--color-accent-dark); border-color: var(--color-parchment); }
+.loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; color: white; font-size: 1.5em; }
+.loading-spinner { border: 8px solid rgba(255,255,255,0.2); border-top: 8px solid var(--color-accent); border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
