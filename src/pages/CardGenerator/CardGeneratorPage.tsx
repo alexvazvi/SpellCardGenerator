@@ -287,7 +287,6 @@ const CardBackPreview = ({ cardProps }: { cardProps: any }) => {
       border: showBorder ? `10px solid ${borderColor}` : 'none',
       borderRadius: '15px',
       backgroundColor: frame ? 'transparent' : backBackgroundColor,
-      position: 'relative', // Needed for the pseudo-element
       boxSizing: 'border-box',
       position: 'relative',
       zIndex: 2,
@@ -355,7 +354,7 @@ function CardGeneratorPage() {
     border: { active: false, style: 'rounded', width: 2, color: defaultBorderColor }
   });
   const [descriptionProps, setDescriptionProps] = useState({ 
-    text: 'Una explosión de llamas rugientes estalla en un punto de tu elección dentro del alcance. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Recibe 8d6 de daño por fuego si falla, o la mitad si tiene éxito.', x: 30, y: 250, width: 260, height: 120,
+    text: 'Una explosión de llamas rugientes estalla en un punto de tu elección dentro del alcance. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Recibe 8d6 de daño por fuego si falla, o la mitad si tiene éxito.', x: 30, y: 150, width: 260, height: 220,
     color: '#000000',
     backgroundColor: 'rgba(0,0,0,0)',
     highlight: { active: false, color: '#ffff00' },
@@ -376,6 +375,9 @@ function CardGeneratorPage() {
   const [imageSize, setImageSize] = useState({ width: 150, height: 150 });
   const [imageRotation, setImageRotation] = useState(0);
   const [imageBorder, setImageBorder] = useState({ active: false, color: '#000000', width: 3 });
+  const [backImage, setBackImage] = useState<string | null>(null);
+  const [backImageSize, setBackImageSize] = useState({ width: 150, height: 150 });
+  const [backImageRotation, setBackImageRotation] = useState(0);
 
   // State for decorative dividers
   const [divider1, setDivider1] = useState({ x: 40, y: 80, width: 240, height: 10 });
@@ -385,11 +387,6 @@ function CardGeneratorPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [smartGuides, setSmartGuides] = useState<{vertical: number | null, horizontal: number | null}>({ vertical: null, horizontal: null });
-
-  // State for back image
-  const [backImage, setBackImage] = useState<string | null>(null);
-  const [backImageSize, setBackImageSize] = useState({ width: 150, height: 150 });
-  const [backImageRotation, setBackImageRotation] = useState(0);
 
   // Pattern options for card back
   const backPatterns = [
