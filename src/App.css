@@ -59,7 +59,7 @@
 /* === Form-as-Card & Import Styles === */
 .spell-form-as-card { width: 100%; border: 2px solid var(--color-accent-dark); border-radius: 14px; padding: 1rem; box-sizing: border-box; background: linear-gradient(135deg, var(--color-parchment), var(--color-parchment-darker)); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; position: relative; font-family: var(--font-body); }
 .spell-form-as-card .card-footer { border-top: none; padding-top: 1rem; }
-.spell-form-as-card .card-details div { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; } /* FIX: Ensures input fields are visible */
+.spell-form-as-card .card-details div { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0; }
 .form-card-input, .form-card-textarea, .form-card-input-inline { background: rgba(0,0,0,0.05); border: 1px dashed var(--color-accent); border-radius: 4px; color: var(--color-text); font-family: inherit; font-size: inherit; padding: 0.2rem 0.4rem; width: 100%; box-sizing: border-box; }
 .dark-mode .form-card-input, .dark-mode .form-card-textarea, .dark-mode .form-card-input-inline { background: rgba(255,255,255,0.08); border-color: var(--color-accent); color: var(--color-text); }
 .form-card-input::placeholder, .form-card-textarea::placeholder, .form-card-input-inline::placeholder { color: var(--color-accent); opacity: 0.6; }
@@ -69,12 +69,12 @@
 .form-success-message { text-align: center; margin-top: 1rem; color: #27ae60; font-weight: bold; }
 .spell-form-button { margin-top: 1rem; width: 100%; background: var(--color-accent-dark); color: var(--color-parchment); font-family: var(--font-display); font-size: 1.25em; font-weight: 700; padding: 0.75rem 1rem; border: 1px solid var(--color-accent); border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
 .spell-form-button:hover { background: var(--color-accent); transform: translateY(-2px); }
-#json-import-area.detailed-placeholder { background-color: #fffdf5; border: 1px dashed var(--color-accent); border-radius: 14px; padding: 0.5rem; } /* FIX: Added border-radius and consistent styling */
-.dark-mode #json-import-area.detailed-placeholder { background-color: #3a2e28; border-color: var(--color-accent-dark); }
-.textarea-wrapper { position: relative; }
+.textarea-wrapper { position: relative; width: 100%; }
 .copy-button { position: absolute; top: 10px; right: 10px; background-color: var(--color-accent); color: var(--color-parchment); border: 1px solid var(--color-accent-dark); border-radius: 6px; padding: 0.3rem 0.6rem; font-family: var(--font-body); font-size: 0.8em; cursor: pointer; transition: all 0.2s ease-in-out; opacity: 0.7; }
 .copy-button:hover { opacity: 1; background-color: var(--color-accent-dark); transform: scale(1.05); }
 .dark-mode .copy-button { background-color: var(--color-parchment); color: var(--color-accent-dark); border-color: var(--color-accent); }
+#json-import-area.detailed-placeholder { background-color: #fffdf5; border: 1px dashed var(--color-accent); border-radius: 14px; padding: 0.5rem; width: 100%; box-sizing: border-box; min-height: 120px; resize: vertical; line-height: 1.4; font-size: 0.75em; }
+.dark-mode #json-import-area.detailed-placeholder { background-color: #3a2e28; border-color: var(--color-accent-dark); }
 .detailed-placeholder::placeholder { color: var(--color-accent); opacity: 0.6; font-size: 0.9em; }
 
 /* === Edit Mode Styles === */
@@ -83,7 +83,7 @@
 .dark-mode .card-wrapper.edit-mode .card { border-color: #e7d7b1; }
 .editable-input, .editable-textarea { background: transparent; border: none; font-family: inherit; font-size: inherit; font-weight: inherit; color: inherit; padding: 0; margin: 0; width: 100%; border-bottom: 1px dashed rgba(0,0,0,0.2); transition: all 0.2s; }
 .editable-input:focus, .editable-textarea:focus { outline: none; border-bottom: 1px solid var(--color-accent-dark); background-color: rgba(0,0,0,0.05); }
-.editable-textarea { resize: vertical; min-height: 100px; padding: 0.5rem; } /* Added padding for better editing */
+.editable-textarea { resize: vertical; min-height: 100px; padding: 0.5rem; }
 .dark-mode .editable-input, .dark-mode .editable-textarea { border-bottom-color: rgba(255,255,255,0.2); }
 .dark-mode .editable-input:focus, .dark-mode .editable-textarea:focus { border-bottom-color: #ffc107; background-color: rgba(255,255,255,0.08); }
 .edit-mode .card-level { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
