@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './CardGeneratorPage.css';
 import PageContainer from '../../components/PageContainer';
-import { Rnd } from 'react-rnd';
+import type { DraggableData } from 'react-rnd';
 import tinycolor from 'tinycolor2';
 import CardBackPreview from '../../components/CardBackPreview';
 import GenericCardPreview from '../../components/GenericCardPreview';
@@ -83,7 +83,7 @@ function CardGeneratorPage() {
 
   const handleAccordionToggle = (name: string) => {
     setOpenAccordion(prev => prev === name ? null : name);
-  }
+  };
   const backPatterns = [
     { name: 'None', url: '' },
     { name: 'Old Leather', url: 'https://www.transparenttextures.com/patterns/leather.png' },
@@ -167,12 +167,12 @@ function CardGeneratorPage() {
     document.body.classList.add('is-dragging');
   };
 
-  const handleDragStop = (element: string, d: any, size: {width: string | number, height: string | number}) => {
+  const handleDragStop = (element: string, d: DraggableData, size: {width: string | number, height: string | number}) => {
     setIsDragging(false);
     document.body.classList.remove('is-dragging');
     setSmartGuides({ vertical: null, horizontal: null });
     if (element === 'image' || element === 'imageBack') {
-      handleImageUpdate(element, { x: d.x, y: d.y }, {width: String(size.width), height: String(size.height)});
+      handleImageUpdate(element as 'image' | 'imageBack', { x: d.x, y: d.y }, {width: String(size.width), height: String(size.height)});
     } else {
       handleElementUpdate(element, { x: d.x, y: d.y }, {width: String(size.width), height: String(size.height)});
     }
@@ -206,7 +206,7 @@ function CardGeneratorPage() {
   };
   const handleElementUpdate = (element: string, pos: {x: number, y: number}, size: {width: string, height: string}) => {
     const newSize = { width: parseInt(size.width), height: parseInt(size.height) };
-    let newPos = { x: pos.x, y: pos.y };
+    const newPos = { x: pos.x, y: pos.y };
 
     const cardWidth = 320;
     const snapThreshold = 5;

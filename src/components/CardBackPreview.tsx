@@ -3,7 +3,37 @@ import { Rnd } from 'react-rnd';
 
 type ElementName = 'title' | 'description' | 'footer' | 'image' | 'imageBack' | 'divider1' | 'divider2' | null;
 
-const CardBackPreview = ({ cardProps, imageBack, imageBackSize, onImageUpdate, activeElement, onElementClick, handleDragStart, handleDragStop, imageBorder }: { cardProps: any, imageBack: string | null, imageBackSize: any, onImageUpdate: any, activeElement: ElementName, onElementClick: (element: ElementName, e: React.MouseEvent<Element, MouseEvent>) => void, handleDragStart: () => void, handleDragStop: (element: string, d: any, size: any) => void, imageBorder: any }) => {
+import type { CardProps, ImageState } from '../types';
+import type { DraggableData } from 'react-rnd';
+
+interface CardBackPreviewProps {
+  cardProps: CardProps;
+  imageBack: string | null;
+  imageBackSize: ImageState;
+  onImageUpdate: (element: 'image' | 'imageBack', pos: { x: number; y: number }, size: { width: string; height: string }) => void;
+  activeElement: ElementName;
+  onElementClick: (element: ElementName, e: React.MouseEvent<Element, MouseEvent>) => void;
+  handleDragStart: () => void;
+  handleDragStop: (element: string, d: DraggableData, size: { width: number | string; height: number | string }) => void;
+  imageBorder: {
+    active: boolean;
+    color: string;
+    width: number;
+    lockAspectRatio: boolean;
+  };
+}
+
+const CardBackPreview: React.FC<CardBackPreviewProps> = ({
+  cardProps,
+  imageBack,
+  imageBackSize,
+  onImageUpdate,
+  activeElement,
+  onElementClick,
+  handleDragStart,
+  handleDragStop,
+  imageBorder
+}) => {
   const { frameBack, borderColor, backBackgroundColor, backBackgroundImage } = cardProps;
   const showBorder = !frameBack;
 
@@ -53,10 +83,10 @@ const CardBackPreview = ({ cardProps, imageBack, imageBackSize, onImageUpdate, a
                         }}
                         size={{ width: imageBackSize.width, height: imageBackSize.height }}
                         position={{ x: imageBackSize.x, y: imageBackSize.y }}
-                        onDragStart={(e) => { e.stopPropagation(); handleDragStart(); onElementClick('imageBack', e as any);}}
+                        onDragStart={(e) => { e.stopPropagation(); handleDragStart(); onElementClick('imageBack', e as React.MouseEvent<Element, MouseEvent>);}}
                         onDragStop={(_e, d) => handleDragStop('imageBack', d, imageBackSize)}
-                        onResizeStart={(e) => { e.stopPropagation(); onElementClick('imageBack', e as any);}}
-                        onResizeStop={(_e, _dir, ref, _del, pos) =>
+                        onResizeStart={(e) => { e.stopPropagation(); onElementClick('imageBack', e as React.MouseEvent<Element, MouseEvent>);}}
+                        onResizeStop={(_e, _dir, ref, _delta, pos) =>
                             onImageUpdate('imageBack', pos, {
                                 width: ref.style.width,
                                 height: ref.style.height,

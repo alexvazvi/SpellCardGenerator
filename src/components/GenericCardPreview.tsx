@@ -3,34 +3,63 @@ import { Rnd } from 'react-rnd';
 
 type ElementName = 'title' | 'description' | 'footer' | 'image' | 'imageBack' | 'divider1' | 'divider2' | null;
 
-const GenericCardPreview = (
-    { cardProps, image, imageBorder, onImageUpdate, imageSize, imageRotation, titleProps, descriptionProps, footerProps, onElementUpdate, divider1, divider2, setDivider1, setDivider2, smartGuides, handleDragStart, handleDragStop, activeElement, onElementClick }:
-    { 
-      cardProps: any,
-      image: string | null,
-      imageBorder: any,
-      onImageUpdate: (element: 'image' | 'imageBack', pos: any, size: any) => void,
-      imageSize: { x: number, y: number, width: number | string, height: number | string },
-      imageRotation: number,
-      titleProps: any,
-      descriptionProps: any,
-      footerProps: any,
-      onElementUpdate: (element: string, pos: any, size: any) => void,
-      divider1: any,
-      divider2: any,
-      setDivider1: (pos: any) => void,
-      setDivider2: (pos: any) => void,
-      smartGuides: { vertical: number | null, horizontal: number | null },
-      handleDragStart: () => void,
-      handleDragStop: (element: string, d: any, size: any) => void,
-      activeElement: ElementName,
-      onElementClick: (element: ElementName, e: React.MouseEvent<Element, MouseEvent>) => void;
-    }
-) => {
+import type { CardProps, TextElementProps, ImageState, DividerState } from '../types';
+import type { DraggableData } from 'react-rnd';
+interface GenericCardPreviewProps {
+  cardProps: CardProps;
+  image: string | null;
+  imageBorder: {
+    active: boolean;
+    color: string;
+    width: number;
+    lockAspectRatio: boolean;
+  };
+  onImageUpdate: (element: 'image' | 'imageBack', pos: { x: number; y: number }, size: { width: string; height: string }) => void;
+  imageSize: ImageState;
+  imageRotation: number;
+  titleProps: TextElementProps;
+  descriptionProps: TextElementProps;
+  footerProps: TextElementProps;
+  onElementUpdate: (element: string, pos: { x: number; y: number }, size: { width: string; height: string }) => void;
+  divider1: DividerState;
+  divider2: DividerState;
+  setDivider1: (state: DividerState) => void;
+  setDivider2: (state: DividerState) => void;
+  smartGuides: {
+    vertical: number | null;
+    horizontal: number | null;
+  };
+  handleDragStart: () => void;
+  handleDragStop: (element: string, d: DraggableData, size: { width: number | string; height: number | string }) => void;
+  activeElement: ElementName;
+  onElementClick: (element: ElementName, e: React.MouseEvent<Element, MouseEvent>) => void;
+}
+
+const GenericCardPreview: React.FC<GenericCardPreviewProps> = ({
+  cardProps,
+  image,
+  imageBorder,
+  onImageUpdate,
+  imageSize,
+  imageRotation,
+  titleProps,
+  descriptionProps,
+  footerProps,
+  onElementUpdate,
+  divider1,
+  divider2,
+  setDivider1,
+  setDivider2,
+  smartGuides,
+  handleDragStart,
+  handleDragStop,
+  activeElement,
+  onElementClick,
+}) => {
   const { frame, borderColor, backgroundColor, backgroundImage, fontFamily } = cardProps;
   const showBorder = !frame;
 
-  const getElementStyles = (props: any, name: ElementName): React.CSSProperties => {
+  const getElementStyles = (props: TextElementProps, name: ElementName): React.CSSProperties => {
     const styles: React.CSSProperties = {
         zIndex: activeElement === name ? 10 : 4,
         background: props.backgroundColor,
@@ -47,7 +76,7 @@ const GenericCardPreview = (
     return styles;
   }
 
-  const getTextStyles = (props: any, name: ElementName): React.CSSProperties => {
+  const getTextStyles = (props: TextElementProps, name: ElementName): React.CSSProperties => {
     const styles: React.CSSProperties = {
         width: '100%',
         height: '100%',
@@ -77,7 +106,7 @@ const GenericCardPreview = (
     return styles;
   }
 
-  const textWrapper = (text: string, props: any) => {
+  const textWrapper = (text: string, props: TextElementProps) => {
     if (props.highlight?.active) {
       return (
         <span style={{ backgroundColor: props.highlight.color, padding: '0.1em 0.2em', boxDecorationBreak: 'clone' }}>
@@ -151,12 +180,12 @@ const GenericCardPreview = (
                 }}
                 size={{ width: imageSize.width, height: imageSize.height }}
                 position={{ x: imageSize.x, y: imageSize.y }}
-                onDragStart={(e) => { e.stopPropagation(); handleDragStart(); onElementClick('image', e as any);}}
+                onDragStart={(e) => { e.stopPropagation(); handleDragStart(); onElementClick('image', e as React.MouseEvent<Element, MouseEvent>);}}
                 onDragStop={(_e, d) =>
                   handleDragStop('image', d, imageSize)
                 }
-                onResizeStart={(e) => { e.stopPropagation(); onElementClick('image', e as any); }}
-                onResizeStop={(_e, _dir, ref, _del, pos) =>
+                onResizeStart={(e) => { e.stopPropagation(); onElementClick('image', e as React.MouseEvent<Element, MouseEvent>); }}
+                onResizeStop={(_e, _dir, ref, _delta, pos) =>
                   onImageUpdate('image', pos, {
                     width: ref.style.width,
                     height: ref.style.height,
@@ -185,9 +214,9 @@ const GenericCardPreview = (
               style={{ zIndex: activeElement === 'divider1' ? 10 : 5, display: 'flex', alignItems: 'center', justifyContent: 'center', border: activeElement === 'divider1' ? '1px dashed grey' : 'none',}}
               size={{ width: divider1.width, height: divider1.height }}
               position={{ x: divider1.x, y: divider1.y }}
-              onDragStart={(e) => { e.stopPropagation(); onElementClick('divider1', e as any); handleDragStart(); }}
+              onDragStart={(e) => { e.stopPropagation(); onElementClick('divider1', e as React.MouseEvent<Element, MouseEvent>); handleDragStart(); }}
               onDragStop={(_e, d) => { setDivider1({ ...divider1, x: d.x, y: d.y }); handleDragStop('divider1', d, {width: divider1.width, height: divider1.height}) }}
-              onResizeStop={(_e, _dir, ref, _del, pos) => setDivider1({ ...pos, width: parseInt(ref.style.width), height: parseInt(ref.style.height) })}
+              onResizeStop={(_e, _dir, ref, _delta, pos) => setDivider1({ ...pos, width: parseInt(ref.style.width), height: parseInt(ref.style.height) })}
               bounds="parent"
               className={activeElement === 'divider1' ? 'interactive-element active' : 'interactive-element'}
               onClick={(e: React.MouseEvent<Element, MouseEvent>) => onElementClick('divider1', e)}
@@ -200,7 +229,7 @@ const GenericCardPreview = (
               style={getElementStyles(titleProps, 'title')}
               size={{ width: titleProps.width, height: titleProps.height }}
               position={{ x: titleProps.x, y: titleProps.y }}
-              onDragStart={(e) => { e.stopPropagation(); onElementClick('title', e as any); handleDragStart(); }}
+              onDragStart={(e) => { e.stopPropagation(); onElementClick('title', e as React.MouseEvent<Element, MouseEvent>); handleDragStart(); }}
               onDragStop={(_e, d) =>
                 handleDragStop(
                   'title',
@@ -208,8 +237,8 @@ const GenericCardPreview = (
                   { width: titleProps.width, height: titleProps.height }
                 )
               }
-              onResizeStart={(e) => { e.stopPropagation(); onElementClick('title', e as any); }}
-              onResizeStop={(_e, _dir, ref, _del, pos) =>
+              onResizeStart={(e) => { e.stopPropagation(); onElementClick('title', e as React.MouseEvent<Element, MouseEvent>); }}
+              onResizeStop={(_e, _dir, ref, _delta, pos) =>
                 onElementUpdate('title', pos, {
                   width: ref.style.width,
                   height: ref.style.height,
@@ -231,7 +260,7 @@ const GenericCardPreview = (
                 height: descriptionProps.height,
               }}
               position={{ x: descriptionProps.x, y: descriptionProps.y }}
-              onDragStart={(e) => { e.stopPropagation(); onElementClick('description', e as any); handleDragStart(); }}
+              onDragStart={(e) => { e.stopPropagation(); onElementClick('description', e as React.MouseEvent<Element, MouseEvent>); handleDragStart(); }}
               onDragStop={(_e, d) =>
                 handleDragStop(
                   'description',
@@ -242,8 +271,8 @@ const GenericCardPreview = (
                   }
                 )
               }
-              onResizeStart={(e) => { e.stopPropagation(); onElementClick('description', e as any); }}
-              onResizeStop={(_e, _dir, ref, _del, pos) =>
+              onResizeStart={(e) => { e.stopPropagation(); onElementClick('description', e as React.MouseEvent<Element, MouseEvent>); }}
+              onResizeStop={(_e, _dir, ref, _delta, pos) =>
                 onElementUpdate('description', pos, {
                   width: ref.style.width,
                   height: ref.style.height,
@@ -267,9 +296,9 @@ const GenericCardPreview = (
               style={{ zIndex: activeElement === 'divider2' ? 10 : 5, display: 'flex', alignItems: 'center', justifyContent: 'center', border: activeElement === 'divider2' ? '1px dashed grey' : 'none',}}
               size={{ width: divider2.width, height: divider2.height }}
               position={{ x: divider2.x, y: divider2.y }}
-              onDragStart={(e) => { e.stopPropagation(); onElementClick('divider2', e as any); handleDragStart(); }}
+              onDragStart={(e) => { e.stopPropagation(); onElementClick('divider2', e as React.MouseEvent<Element, MouseEvent>); handleDragStart(); }}
               onDragStop={(_e, d) => { setDivider2({ ...divider2, x: d.x, y: d.y }); handleDragStop('divider2', d, {width: divider2.width, height: divider2.height}) }}
-              onResizeStop={(_e, _dir, ref, _del, pos) => setDivider2({ ...pos, width: parseInt(ref.style.width), height: parseInt(ref.style.height) })}
+              onResizeStop={(_e, _dir, ref, _delta, pos) => setDivider2({ ...pos, width: parseInt(ref.style.width), height: parseInt(ref.style.height) })}
               bounds="parent"
               className={activeElement === 'divider2' ? 'interactive-element active' : 'interactive-element'}
               onClick={(e: React.MouseEvent<Element, MouseEvent>) => onElementClick('divider2', e)}
@@ -282,7 +311,7 @@ const GenericCardPreview = (
               style={getElementStyles(footerProps, 'footer')}
               size={{ width: footerProps.width, height: footerProps.height }}
               position={{ x: footerProps.x, y: footerProps.y }}
-              onDragStart={(e) => { e.stopPropagation(); onElementClick('footer', e as any); handleDragStart(); }}
+              onDragStart={(e) => { e.stopPropagation(); onElementClick('footer', e as React.MouseEvent<Element, MouseEvent>); handleDragStart(); }}
               onDragStop={(_e, d) =>
                 handleDragStop(
                   'footer',
@@ -290,8 +319,8 @@ const GenericCardPreview = (
                   { width: footerProps.width, height: footerProps.height }
                 )
               }
-              onResizeStart={(e) => { e.stopPropagation(); onElementClick('footer', e as any); }}
-              onResizeStop={(_e, _dir, ref, _del, pos) =>
+              onResizeStart={(e) => { e.stopPropagation(); onElementClick('footer', e as React.MouseEvent<Element, MouseEvent>); }}
+              onResizeStop={(_e, _dir, ref, _delta, pos) =>
                 onElementUpdate('footer', pos, {
                   width: ref.style.width,
                   height: ref.style.height,

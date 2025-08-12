@@ -60,53 +60,7 @@
   position: relative;
 }
 
-.card-flipper-container {
-  width: 320px;
-  height: 450px;
-  cursor: pointer;
-}
-
-.card-flipper {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.7s ease-in-out; /* Smoother, more natural animation */
-}
-
-.card-flipper.is-flipped {
-  transform: rotateY(180deg);
-}
-
-.card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden; /* Safari */
-  pointer-events: auto; /* Elements are clickable by default */
-}
-
-.card-back {
-  transform: rotateY(180deg);
-}
-
-/* Make the hidden face unclickable */
-.card-flipper .card-front {
-  transform: rotateY(0deg);
-}
-
-.card-flipper.is-flipped .card-front {
-  pointer-events: none;
-}
-
-.card-flipper .card-back {
-  pointer-events: none;
-}
-
-.card-flipper.is-flipped .card-back {
-  pointer-events: auto;
-}
+/* The card flipper styles have been moved to App.css for global use */
 
 .card-content-area {
   position: absolute;
