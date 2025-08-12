@@ -225,6 +225,7 @@ const GenericCardPreview = (
                   alignItems: 'flex-start',
                   textAlign: 'left',
                   whiteSpace: 'pre-wrap',
+                  paddingTop: '20px',
                 }}
               >
                 {textWrapper(descriptionProps.text, descriptionProps)}
@@ -278,15 +279,15 @@ const GenericCardPreview = (
 }
 
 const CardBackPreview = ({ cardProps }: { cardProps: any }) => {
-  const { frame, borderColor, backBackgroundColor, backBackgroundImage } = cardProps;
-  const showBorder = !frame;
+  const { frameBack, borderColor, backBackgroundColor, backBackgroundImage } = cardProps;
+  const showBorder = !frameBack;
 
   const cardBaseStyle: React.CSSProperties = {
       width: '100%',
       height: '100%',
       border: showBorder ? `10px solid ${borderColor}` : 'none',
       borderRadius: '15px',
-      backgroundColor: frame ? 'transparent' : backBackgroundColor,
+      backgroundColor: frameBack ? 'transparent' : backBackgroundColor,
       boxSizing: 'border-box',
       position: 'relative',
       zIndex: 2,
@@ -304,7 +305,6 @@ const CardBackPreview = ({ cardProps }: { cardProps: any }) => {
           overflow: 'hidden',
           borderRadius: '15px',
       }}>
-          {frame && <img src={frame} alt="Card Frame" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1, objectFit: 'fill' }}/>}
           <div style={cardBaseStyle}>
               <div style={{
                 position: 'absolute',
@@ -315,9 +315,11 @@ const CardBackPreview = ({ cardProps }: { cardProps: any }) => {
                 backgroundImage: `url(${backBackgroundImage})`,
                 backgroundColor: cardProps.backPatternColor,
                 opacity: cardProps.backPatternOpacity,
-                zIndex: 3,
+                zIndex: 2, // Lower zIndex
               }}></div>
           </div>
+          {/* Move frame to be rendered on top */}
+          {frameBack && <img src={frameBack} alt="Card Frame Back" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3, objectFit: 'fill' }}/>}
       </div>
   )
 }
@@ -330,6 +332,7 @@ function CardGeneratorPage() {
     borderWidth: 3, // New state for border thickness
     fontFamily: 'serif',
     frame: '',
+    frameBack: '',
     backgroundColor: '#F5DEB3',
     backgroundImage: null as string | null,
     backBackgroundColor: '#8B4513',
@@ -354,7 +357,7 @@ function CardGeneratorPage() {
     border: { active: false, style: 'rounded', width: 2, color: defaultBorderColor }
   });
   const [descriptionProps, setDescriptionProps] = useState({ 
-    text: 'Una explosión de llamas rugientes estalla en un punto de tu elección dentro del alcance. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Recibe 8d6 de daño por fuego si falla, o la mitad si tiene éxito.', x: 30, y: 150, width: 260, height: 220,
+    text: 'Una explosión de llamas rugientes estalla en un punto de tu elección dentro del alcance. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Recibe 8d6 de daño por fuego si falla, o la mitad si tiene éxito.', x: 30, y: 180, width: 260, height: 220,
     color: '#000000',
     backgroundColor: 'rgba(0,0,0,0)',
     highlight: { active: false, color: '#ffff00' },
@@ -401,6 +404,12 @@ function CardGeneratorPage() {
     { name: 'Marco Clásico', value: '/frames/classic-frame.png' },
     { name: 'Marco Élfico', value: '/frames/elvish-frame.png' },
     { name: 'Marco Enano', value: '/frames/dwarven-frame.png' },
+  ];
+
+  const availableFramesBack = [
+    { name: 'Sin Marco', value: '' },
+    { name: 'Marco Clásico (Trasero)', value: '/frames/classic-frame-back.png' },
+    // Agrega aquí más marcos traseros si los tienes
   ];
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, callback: (result: string) => void) => {
@@ -510,9 +519,15 @@ function CardGeneratorPage() {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label>Marco (Imagen):</label>
+                    <label>Marco Frontal:</label>
                     <select value={cardProps.frame} onChange={(e) => updateCardProps({ frame: e.target.value })} className="form-card-input">
                       {availableFrames.map(frame => (<option key={frame.value} value={frame.value}>{frame.name}</option>))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Marco Trasero:</label>
+                    <select value={cardProps.frameBack} onChange={(e) => updateCardProps({ frameBack: e.target.value })} className="form-card-input">
+                      {availableFramesBack.map(frame => (<option key={frame.value} value={frame.value}>{frame.name}</option>))}
                     </select>
                   </div>
                   <div className="form-group">
