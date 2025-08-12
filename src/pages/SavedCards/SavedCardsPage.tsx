@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PageContainer from '../../components/PageContainer';
 import GenericCardPreview from '../../components/GenericCardPreview';
 import CardBackPreview from '../../components/CardBackPreview'; // Importar el reverso
@@ -108,7 +108,7 @@ const SavedCardsPage: React.FC = () => {
         ) : (
           <div className="no-cards-message spell-form-as-card">
             <h3>No tienes cartas guardadas</h3>
-            <p>¡Ve al <a href="/card-generator">Creador de Cartas</a> para empezar a diseñar!</p>
+            <p>¡Ve al <Link to="/card-generator">Creador de Cartas</Link> para empezar a dise��ar!</p>
           </div>
         )}
       </div>
