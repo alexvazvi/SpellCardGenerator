@@ -250,6 +250,7 @@
 
 .pattern-selector {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 5px;
 }
@@ -257,20 +258,52 @@
 .pattern-thumbnail {
   width: 50px;
   height: 50px;
-  border: 2px solid var(--color-accent);
+  border: 2px solid transparent;
   border-radius: 8px;
   cursor: pointer;
-  background-color: var(--color-parchment-darker); /* Fallback color */
-  background-size: cover;
+  background-color: var(--color-parchment-dark);
+  background-size: 30px 30px;
+  background-repeat: repeat;
   transition: all 0.2s ease;
+  position: relative;
 }
-
+.pattern-thumbnail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-background);
+  opacity: 0.5;
+  z-index: 1;
+}
+.pattern-thumbnail:hover, .pattern-thumbnail.active {
+   border-color: var(--color-accent-dark);
+}
+.pattern-thumbnail.active {
+  box-shadow: 0 0 10px var(--color-accent-dark);
+  transform: scale(1.1);
+}
 .pattern-thumbnail:hover {
   transform: scale(1.1);
 }
 
-.pattern-thumbnail.active {
-  border-color: var(--color-accent-dark);
-  box-shadow: 0 0 10px var(--color-accent-dark);
-  transform: scale(1.1);
+/* Grid layout for forms */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.grid-col-span-2 {
+  grid-column: span 2;
+}
+
+.form-grid-group {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: end;
 }

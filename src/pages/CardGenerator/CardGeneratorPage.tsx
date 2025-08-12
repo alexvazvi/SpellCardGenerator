@@ -451,6 +451,11 @@ function CardGeneratorPage() {
   const clickTimeout = useRef<number | null>(null);
   const elementClicked = useRef(false);
   const mouseDownPos = useRef({ x: 0, y: 0 });
+  const [openAccordion, setOpenAccordion] = useState<string | null>('card-styles');
+
+  const handleAccordionToggle = (name: string) => {
+    setOpenAccordion(prev => prev === name ? null : name);
+  }
   const backPatterns = [
     { name: 'None', url: '' },
     { name: 'Old Leather', url: 'https://www.transparenttextures.com/patterns/leather.png' },
@@ -622,9 +627,9 @@ function CardGeneratorPage() {
             </div>
             <div className="card-body" style={{overflowY: 'auto', maxHeight: 'calc(100vh - 120px)'}}>
               
-              <details className="accordion-item" open>
+              <details className="accordion-item" open={openAccordion === 'card-styles'} onClick={(e) => { e.preventDefault(); handleAccordionToggle('card-styles'); }}>
                 <summary className="accordion-header">Estilos de Carta</summary>
-                <div className="accordion-content">
+                <div className="accordion-content form-grid" onClick={(e) => e.stopPropagation()}>
                   <div className="form-group">
                     <label>Fuente:</label>
                     <select value={cardProps.fontFamily} onChange={(e) => updateCardProps({ fontFamily: e.target.value })} className="form-card-input">
@@ -633,6 +638,9 @@ function CardGeneratorPage() {
                       <option value="fantasy">Fantasy (Fantasía)</option>
                       <option value="'Cinzel', serif">Cinzel (Épica)</option>
                     </select>
+                  </div>
+                  <div className="form-group">
+                    {/* Placeholder for grid alignment */}
                   </div>
                   <div className="form-group">
                     <label>Marco Frontal:</label>
@@ -647,35 +655,34 @@ function CardGeneratorPage() {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label>Color Borde (si no hay marco):</label>
+                    <label>Color Borde (sin marco):</label>
                     <input type="color" value={cardProps.borderColor} onChange={(e) => updateCardProps({ borderColor: e.target.value })} style={{width: '100%'}}/>
                   </div>
                   <div className="form-group">
                     <label>Grosor Borde ({cardProps.borderWidth}px):</label>
                     <input type="range" min="0" max="20" value={cardProps.borderWidth} onChange={(e) => updateCardProps({ borderWidth: parseInt(e.target.value) })} />
                   </div>
-                  <div className="form-group">
+                   <div className="form-group">
                     <label>Color Fondo (Frontal):</label>
                     <input type="color" value={cardProps.backgroundColor} onChange={(e) => updateCardProps({ backgroundColor: e.target.value })} style={{width: '100%'}}/>
                   </div>
-
                   <div className="form-group">
                     <label>Color Fondo (Trasera):</label>
                     <input type="color" value={cardProps.backBackgroundColor} onChange={(e) => updateCardProps({ backBackgroundColor: e.target.value })} style={{width: '100%'}}/>
                   </div>
-                  <div className="form-group">
+                  <div className="form-group grid-col-span-2">
                     <label>Imagen Fondo (Trasera):</label>
                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (res) => updateCardProps({ backBackgroundImage: res }))} className="form-card-input"/>
                   </div>
-                  <div className="form-group">
+                  <div className="form-group grid-col-span-2">
                     <label>Patrón de Fondo (Trasera):</label>
                     <div className="pattern-selector">
                       {backPatterns.map(pattern => (
                         <div 
                           key={pattern.name}
                           className={`pattern-thumbnail ${cardProps.backBackgroundImage === pattern.url ? 'active' : ''}`}
-                          style={{ backgroundImage: pattern.url ? `url(${pattern.url})` : 'none', backgroundColor: !pattern.url ? 'var(--color-parchment-darker)' : 'transparent' }}
-                          onClick={() => updateCardProps({ backBackgroundImage: pattern.url })}
+                          style={{ backgroundImage: pattern.url ? `url(${pattern.url})` : 'none' }}
+                          onClick={(e) => { e.stopPropagation(); updateCardProps({ backBackgroundImage: pattern.url }); }}
                           title={pattern.name}
                         >
                           {!pattern.url && 'N/A'}
@@ -684,23 +691,23 @@ function CardGeneratorPage() {
                     </div>
                   </div>
                   {cardProps.backBackgroundImage && (
-                    <>
-                      <div className="form-group">
-                        <label>Color del Patrón:</label>
-                        <input type="color" value={cardProps.backPatternColor} onChange={(e) => updateCardProps({ backPatternColor: e.target.value })} style={{width: '100%'}}/>
-                      </div>
-                      <div className="form-group">
-                        <label>Opacidad del Patrón ({Math.round(cardProps.backPatternOpacity * 100)}%):</label>
-                        <input type="range" min="0" max="1" step="0.05" value={cardProps.backPatternOpacity} onChange={(e) => updateCardProps({ backPatternOpacity: parseFloat(e.target.value) })} />
-                      </div>
-                    </>
+                    <div className="form-grid-group grid-col-span-2">
+                        <div className="form-group">
+                            <label>Color del Patrón:</label>
+                            <input type="color" value={cardProps.backPatternColor} onClick={(e) => e.stopPropagation()} onChange={(e) => updateCardProps({ backPatternColor: e.target.value })} style={{width: '100%'}}/>
+                        </div>
+                        <div className="form-group">
+                            <label>Opacidad del Patrón ({Math.round(cardProps.backPatternOpacity * 100)}%):</label>
+                            <input type="range" min="0" max="1" step="0.05" value={cardProps.backPatternOpacity} onClick={(e) => e.stopPropagation()} onChange={(e) => updateCardProps({ backPatternOpacity: parseFloat(e.target.value) })} />
+                        </div>
+                    </div>
                   )}
                 </div>
               </details>
 
-              <details className="accordion-item" open={['image', 'imageBack'].includes(activeElement || '')}>
+              <details className="accordion-item" open={openAccordion === 'main-image' || ['image', 'imageBack'].includes(activeElement || '')} onClick={(e) => { e.preventDefault(); handleAccordionToggle('main-image'); }}>
                 <summary className="accordion-header">Imagen Principal</summary>
-                <div className="accordion-content">
+                <div className="accordion-content form-grid" onClick={(e) => e.stopPropagation()}>
                   <div className="form-group">
                     <label>Cargar Imagen (Frontal):</label>
                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setImage)} className="form-card-input"/>
@@ -709,31 +716,34 @@ function CardGeneratorPage() {
                     <label>Cargar Imagen (Trasera):</label>
                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setImageBack)} className="form-card-input"/>
                   </div>
-                  {(image && activeElement === 'image') || (imageBack && activeElement === 'imageBack') ? (
-                  <>
-                    <div className="form-group">
-                      <label>Tamaño ({activeElement === 'image' ? Math.round(imageSize.width as number) : Math.round(imageBackSize.width as number)}px):</label>
-                      <input
-                        type="range"
-                        min="50"
-                        max="500"
-                        value={activeElement === 'image' ? imageSize.width : imageBackSize.width as number}
-                        onChange={handleSizeChange}
-                      />
+                  
+                  <div className="form-group grid-col-span-2">
+                    {(image && activeElement === 'image') || (imageBack && activeElement === 'imageBack') ? (
+                    <div className="form-grid-group">
+                      <div className="form-group">
+                        <label>Tamaño ({activeElement === 'image' ? Math.round(imageSize.width as number) : Math.round(imageBackSize.width as number)}px):</label>
+                        <input
+                          type="range"
+                          min="50"
+                          max="500"
+                          value={activeElement === 'image' ? imageSize.width : imageBackSize.width as number}
+                          onChange={handleSizeChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Rotación ({imageRotation}°):</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="360"
+                          value={imageRotation}
+                          onChange={(e) => setImageRotation(parseInt(e.target.value))}
+                        />
+                      </div>
                     </div>
-
-                    <div className="form-group">
-                      <label>Rotación ({imageRotation}°):</label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="360"
-                        value={imageRotation}
-                        onChange={(e) => setImageRotation(parseInt(e.target.value))}
-                      />
-                    </div>
-
-                    <div className="form-group inline-group">
+                    ) : <p className="grid-col-span-2">Selecciona una imagen en la carta para ver sus opciones.</p>}
+                  </div>
+                  <div className="form-group inline-group grid-col-span-2">
                       <input
                         type="checkbox"
                         id="imageBorder"
@@ -743,7 +753,6 @@ function CardGeneratorPage() {
                         }
                       />
                       <label htmlFor="imageBorder">Borde de Imagen</label>
-
                       {imageBorder.active && (
                         <>
                           <input
@@ -769,33 +778,35 @@ function CardGeneratorPage() {
                         </>
                       )}
                     </div>
-                  </>
-                ) : <p>Selecciona una imagen en la carta para ver sus opciones.</p>}
                 </div>
               </details>
 
               {/* Repetir para Título, Descripción y Pie de Página */}
               {/* Ejemplo para Título */}
-              <details className="accordion-item" open={activeElement==='title'}>
-                <summary className="accordion-header" onClick={(e) => { e.preventDefault(); setActiveElement('title'); }}>Elemento: Título</summary>
-                <div className="accordion-content">
-                  <div className="form-group">
+              <details className="accordion-item" open={openAccordion === 'title' || activeElement === 'title'} onClick={(e) => { e.preventDefault(); handleAccordionToggle('title'); }}>
+                <summary className="accordion-header">Elemento: Título</summary>
+                <div className="accordion-content form-grid" onClick={(e) => e.stopPropagation()}>
+                  <div className="form-group grid-col-span-2">
                     <label>Texto:</label>
                     <input type="text" value={titleProps.text} onChange={(e) => setTitleProps(p => ({...p, text: e.target.value, height: 'auto'}))} className="form-card-input" />
                   </div>
-                  <div className="form-group color-group">
-                    <label>Color Texto:</label>
-                    <input type="color" value={titleProps.color} onChange={(e) => setTitleProps(p => ({...p, color: e.target.value}))} />
-                    <label>Fondo:</label>
-                    <input type="color" value={titleProps.backgroundColor} onChange={(e) => setTitleProps(p => ({...p, backgroundColor: e.target.value}))} />
-                    <button type="button" onClick={() => setTitleProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular" title="Fondo transparente">T</button>
+                  <div className="form-grid-group grid-col-span-2">
+                    <div className="form-group">
+                      <label>Color Texto:</label>
+                      <input type="color" value={titleProps.color} onChange={(e) => setTitleProps(p => ({...p, color: e.target.value}))} />
+                    </div>
+                    <div className="form-group">
+                      <label>Fondo:</label>
+                      <input type="color" value={titleProps.backgroundColor} onChange={(e) => setTitleProps(p => ({...p, backgroundColor: e.target.value}))} />
+                       <button type="button" onClick={(e) => {e.stopPropagation(); setTitleProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))}} className="action-button-circular" title="Fondo transparente">T</button>
+                    </div>
                   </div>
-                  <div className="form-group inline-group">
+                  <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="titleHighlight" checked={titleProps.highlight.active} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
                     <label htmlFor="titleHighlight">Resaltado</label>
                     {titleProps.highlight.active && <input type="color" value={titleProps.highlight.color} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                   </div>
-                  <div className="form-group inline-group">
+                  <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="titleStroke" checked={titleProps.stroke.active} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
                     <label htmlFor="titleStroke">Borde de Letra</label>
                     {titleProps.stroke.active && <>
@@ -803,7 +814,7 @@ function CardGeneratorPage() {
                       <input type="number" min="1" max="10" value={titleProps.stroke.width} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
                     </>}
                   </div>
-                  <div className="form-group inline-group">
+                  <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="titleBorder" checked={titleProps.border.active} onChange={e => setTitleProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
                     <label htmlFor="titleBorder">Borde de Caja</label>
                     {titleProps.border.active && <>
@@ -817,26 +828,30 @@ function CardGeneratorPage() {
                   </div>
                 </div>
               </details>
-              <details className="accordion-item" open={activeElement==='description'}>
-                <summary className="accordion-header" onClick={(e) => { e.preventDefault(); setActiveElement('description'); }}>Elemento: Descripción</summary>
-                <div className="accordion-content">
-                  <div className="form-group">
+              <details className="accordion-item" open={openAccordion === 'description' || activeElement === 'description'} onClick={(e) => { e.preventDefault(); handleAccordionToggle('description'); }}>
+                <summary className="accordion-header">Elemento: Descripción</summary>
+                <div className="accordion-content form-grid" onClick={(e) => e.stopPropagation()}>
+                  <div className="form-group grid-col-span-2">
                     <label>Texto:</label>
                     <textarea value={descriptionProps.text} onChange={(e) => setDescriptionProps(p => ({...p, text: e.target.value, height: 'auto'}))} rows={4} className="form-card-textarea"/>
                   </div>
-                  <div className="form-group color-group">
-                    <label>Color Texto:</label>
-                    <input type="color" value={descriptionProps.color} onChange={(e) => setDescriptionProps(p => ({...p, color: e.target.value}))} />
-                    <label>Fondo:</label>
-                    <input type="color" value={descriptionProps.backgroundColor} onChange={(e) => setDescriptionProps(p => ({...p, backgroundColor: e.target.value}))} />
-                    <button type="button" onClick={() => setDescriptionProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular" title="Fondo transparente">T</button>
+                   <div className="form-grid-group grid-col-span-2">
+                    <div className="form-group">
+                      <label>Color Texto:</label>
+                      <input type="color" value={descriptionProps.color} onChange={(e) => setDescriptionProps(p => ({...p, color: e.target.value}))} />
+                    </div>
+                    <div className="form-group">
+                      <label>Fondo:</label>
+                      <input type="color" value={descriptionProps.backgroundColor} onChange={(e) => setDescriptionProps(p => ({...p, backgroundColor: e.target.value}))} />
+                      <button type="button" onClick={(e) => {e.stopPropagation(); setDescriptionProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))}} className="action-button-circular" title="Fondo transparente">T</button>
+                    </div>
                   </div>
-                  <div className="form-group inline-group">
+                  <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="descHighlight" checked={descriptionProps.highlight.active} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
                     <label htmlFor="descHighlight">Resaltado</label>
                     {descriptionProps.highlight.active && <input type="color" value={descriptionProps.highlight.color} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                   </div>
-                  <div className="form-group inline-group">
+                  <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="descStroke" checked={descriptionProps.stroke.active} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
                     <label htmlFor="descStroke">Borde de Letra</label>
                     {descriptionProps.stroke.active && <>
@@ -844,7 +859,7 @@ function CardGeneratorPage() {
                       <input type="number" min="1" max="10" value={descriptionProps.stroke.width} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
                     </>}
                   </div>
-                   <div className="form-group inline-group">
+                   <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="descBorder" checked={descriptionProps.border.active} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
                     <label htmlFor="descBorder">Borde de Caja</label>
                     {descriptionProps.border.active && <>
@@ -858,26 +873,30 @@ function CardGeneratorPage() {
                   </div>
                 </div>
               </details>
-              <details className="accordion-item" open={activeElement==='footer'}>
-                <summary className="accordion-header" onClick={(e) => { e.preventDefault(); setActiveElement('footer'); }}>Elemento: Pie de Página</summary>
-                <div className="accordion-content">
-                  <div className="form-group">
+              <details className="accordion-item" open={openAccordion === 'footer' || activeElement === 'footer'} onClick={(e) => { e.preventDefault(); handleAccordionToggle('footer'); }}>
+                <summary className="accordion-header">Elemento: Pie de Página</summary>
+                <div className="accordion-content form-grid" onClick={(e) => e.stopPropagation()}>
+                  <div className="form-group grid-col-span-2">
                     <label>Texto:</label>
                     <input type="text" value={footerProps.text} onChange={(e) => setFooterProps(p => ({...p, text: e.target.value, height: 'auto'}))} className="form-card-input" />
                   </div>
-                  <div className="form-group color-group">
-                    <label>Color Texto:</label>
-                    <input type="color" value={footerProps.color} onChange={(e) => setFooterProps(p => ({...p, color: e.target.value}))} />
-                    <label>Fondo:</label>
-                    <input type="color" value={footerProps.backgroundColor} onChange={(e) => setFooterProps(p => ({...p, backgroundColor: e.target.value}))} />
-                    <button type="button" onClick={() => setFooterProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))} className="action-button-circular" title="Fondo transparente">T</button>
+                  <div className="form-grid-group grid-col-span-2">
+                    <div className="form-group">
+                      <label>Color Texto:</label>
+                      <input type="color" value={footerProps.color} onChange={(e) => setFooterProps(p => ({...p, color: e.target.value}))} />
+                    </div>
+                    <div className="form-group">
+                      <label>Fondo:</label>
+                      <input type="color" value={footerProps.backgroundColor} onChange={(e) => setFooterProps(p => ({...p, backgroundColor: e.target.value}))} />
+                      <button type="button" onClick={(e) => {e.stopPropagation(); setFooterProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))}} className="action-button-circular" title="Fondo transparente">T</button>
+                    </div>
                   </div>
-                  <div className="form-group inline-group">
+                  <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="footerHighlight" checked={footerProps.highlight.active} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
                     <label htmlFor="footerHighlight">Resaltado</label>
                     {footerProps.highlight.active && <input type="color" value={footerProps.highlight.color} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                   </div>
-                  <div className="form-group inline-group">
+                  <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="footerStroke" checked={footerProps.stroke.active} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
                     <label htmlFor="footerStroke">Borde de Letra</label>
                     {footerProps.stroke.active && <>
@@ -885,7 +904,7 @@ function CardGeneratorPage() {
                       <input type="number" min="1" max="10" value={footerProps.stroke.width} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
                     </>}
                   </div>
-                   <div className="form-group inline-group">
+                   <div className="form-group inline-group grid-col-span-2">
                     <input type="checkbox" id="footerBorder" checked={footerProps.border.active} onChange={e => setFooterProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
                     <label htmlFor="footerBorder">Borde de Caja</label>
                     {footerProps.border.active && <>
