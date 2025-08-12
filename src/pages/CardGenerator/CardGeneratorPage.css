@@ -19,8 +19,7 @@
 
 .forms-column {
   align-self: start;
-  height: auto; /* Allow height to be determined by content */
-  overflow-y: auto;
+  height: auto;
   padding-right: 1rem;
 }
 
@@ -82,10 +81,28 @@
   height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden; /* Safari */
+  pointer-events: auto; /* Elements are clickable by default */
 }
 
 .card-back {
   transform: rotateY(180deg);
+}
+
+/* Make the hidden face unclickable */
+.card-flipper .card-front {
+  transform: rotateY(0deg);
+}
+
+.card-flipper.is-flipped .card-front {
+  pointer-events: none;
+}
+
+.card-flipper .card-back {
+  pointer-events: none;
+}
+
+.card-flipper.is-flipped .card-back {
+  pointer-events: auto;
 }
 
 .card-content-area {
@@ -261,22 +278,11 @@
   border: 2px solid transparent;
   border-radius: 8px;
   cursor: pointer;
-  background-color: var(--color-parchment-dark);
-  background-size: 30px 30px;
+  background-size: cover; /* Changed from 30px 30px */
   background-repeat: repeat;
   transition: all 0.2s ease;
   position: relative;
-}
-.pattern-thumbnail::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--color-background);
-  opacity: 0.5;
-  z-index: 1;
+  background-image: var(--pattern-image);
 }
 .pattern-thumbnail:hover, .pattern-thumbnail.active {
    border-color: var(--color-accent-dark);
@@ -288,6 +294,61 @@
 .pattern-thumbnail:hover {
   transform: scale(1.1);
 }
+
+/* Custom Range Slider Styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: var(--color-parchment-darker);
+  border-radius: 5px;
+  outline: none;
+  border: 1px solid var(--color-accent);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--color-accent-dark);
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid var(--color-parchment);
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  margin-top: -6px; /* Center the thumb on the track */
+  transition: background-color 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--color-accent);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--color-accent-dark);
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid var(--color-parchment);
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  transition: background-color 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: var(--color-accent);
+}
+
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: var(--color-parchment-darker);
+  border-radius: 5px;
+  border: 1px solid var(--color-accent);
+}
+
 
 /* Grid layout for forms */
 .form-grid {
@@ -303,7 +364,49 @@
 .form-grid-group {
     grid-column: span 2;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
     align-items: end;
+}
+
+.form-grid-group .form-group {
+    margin-bottom: 0;
+}
+
+.color-input-with-button {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-accent-darker);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--color-parchment-lighter);
+}
+
+.color-input-with-button input[type="color"] {
+  border: none;
+  padding: 0;
+  height: 35px; /* Match button height */
+  flex-grow: 1;
+}
+
+.color-input-with-button .action-button-circular {
+  border: none;
+  border-left: 1px solid var(--color-accent-darker);
+  border-radius: 0;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+}
+
+.compact-options {
+  gap: 1rem;
+  margin-top: 0.5rem; /* Reduced top margin */
+}
+
+.compact-options > * {
+  margin-right: 0.5rem; /* Space between elements */
+}
+
+.options-group .form-group {
+  margin-bottom: 0.5rem; /* Reduce bottom margin */
 }

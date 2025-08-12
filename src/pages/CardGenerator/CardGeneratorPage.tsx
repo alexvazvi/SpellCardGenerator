@@ -35,7 +35,7 @@ const GenericCardPreview = (
 
   const getElementStyles = (props: any, name: ElementName): React.CSSProperties => {
     const styles: React.CSSProperties = {
-        zIndex: 4,
+        zIndex: activeElement === name ? 10 : 4,
         background: props.backgroundColor,
         border: 'none',
     };
@@ -44,13 +44,13 @@ const GenericCardPreview = (
         styles.borderRadius = props.border.style === 'rounded' ? '8px' : '0px';
     }
     if (activeElement === name) {
-      styles.outline = '1px dashed grey';
+      styles.outline = `2px dashed grey`;
       styles.outlineOffset = '2px';
     }
     return styles;
   }
 
-  const getTextStyles = (props: any): React.CSSProperties => {
+  const getTextStyles = (props: any, name: ElementName): React.CSSProperties => {
     const styles: React.CSSProperties = {
         width: '100%',
         height: '100%',
@@ -66,6 +66,14 @@ const GenericCardPreview = (
         color: props.color,
         fontFamily: 'inherit'
     };
+
+    if (name === 'description') {
+      styles.alignItems = 'flex-start';
+      styles.textAlign = 'left';
+      styles.whiteSpace = 'pre-wrap';
+      // No extra padding top, padding is handled by the main style
+    }
+
     if (props.stroke?.active) {
         styles.WebkitTextStroke = `${props.stroke.width}px ${props.stroke.color}`;
     }
@@ -119,16 +127,29 @@ const GenericCardPreview = (
         )}
   
         <div className="card-content-area">
+            {activeElement && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 9, // Above inactive elements, below the active one
+                }}
+                onClick={(e) => onElementClick(null, e)}
+              />
+            )}
             {smartGuides.vertical && <div className="smart-guide vertical" style={{ left: smartGuides.vertical }}></div>}
             {smartGuides.horizontal && <div className="smart-guide horizontal" style={{ top: smartGuides.horizontal }}></div>}
 
             {image && (
             <Rnd
                 style={{
-                  zIndex: 3,
+                  zIndex: activeElement === 'image' ? 10 : 3,
                   border: imageBorder.active ? `${imageBorder.width}px solid ${imageBorder.color}` : 'none',
                   boxSizing: 'border-box',
-                  outline: activeElement === 'image' ? '1px dashed grey' : 'none',
+                  outline: activeElement === 'image' ? `2px dashed ${!imageBorder.lockAspectRatio ? '#007bff' : 'grey'}` : 'none',
                   outlineOffset: '2px',
                 }}
                 size={{ width: imageSize.width, height: imageSize.height }}
@@ -144,7 +165,7 @@ const GenericCardPreview = (
                     height: ref.style.height,
                   })
                 }
-                lockAspectRatio
+                lockAspectRatio={imageBorder.lockAspectRatio}
                 bounds="parent"
                 className={activeElement === 'image' ? 'interactive-element active' : 'interactive-element'}
                 onClick={(e: React.MouseEvent<Element, MouseEvent>) => onElementClick('image', e)}
@@ -156,6 +177,7 @@ const GenericCardPreview = (
                     width: '100%',
                     height: '100%',
                     transform: `rotate(${imageRotation}deg)`,
+                    objectFit: 'cover',
                     pointerEvents: 'none',
                   }}
                 />
@@ -163,7 +185,7 @@ const GenericCardPreview = (
             )}
   
             <Rnd
-              style={{ zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', border: activeElement === 'divider1' ? '1px dashed grey' : 'none',}}
+              style={{ zIndex: activeElement === 'divider1' ? 10 : 5, display: 'flex', alignItems: 'center', justifyContent: 'center', border: activeElement === 'divider1' ? '1px dashed grey' : 'none',}}
               size={{ width: divider1.width, height: divider1.height }}
               position={{ x: divider1.x, y: divider1.y }}
               onDragStart={(e) => { e.stopPropagation(); onElementClick('divider1', e as any); handleDragStart(); }}
@@ -200,7 +222,7 @@ const GenericCardPreview = (
               className={activeElement === 'title' ? 'interactive-element active' : 'interactive-element'}
               onClick={(e: React.MouseEvent<Element, MouseEvent>) => onElementClick('title', e)}
             >
-              <h3 style={{ ...getTextStyles(titleProps), fontSize: '1.2em' }}>
+              <h3 style={{ ...getTextStyles(titleProps, 'title'), fontSize: '1.2em' }}>
                 {textWrapper(titleProps.text, titleProps)}
               </h3>
             </Rnd>
@@ -236,12 +258,8 @@ const GenericCardPreview = (
             >
               <div
                 style={{
-                  ...getTextStyles(descriptionProps),
+                  ...getTextStyles(descriptionProps, 'description'),
                   fontSize: '0.9em',
-                  alignItems: 'flex-start',
-                  textAlign: 'left',
-                  whiteSpace: 'pre-wrap',
-                  paddingTop: '20px',
                 }}
               >
                 {textWrapper(descriptionProps.text, descriptionProps)}
@@ -249,7 +267,7 @@ const GenericCardPreview = (
             </Rnd>
 
             <Rnd
-              style={{ zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', border: activeElement === 'divider2' ? '1px dashed grey' : 'none',}}
+              style={{ zIndex: activeElement === 'divider2' ? 10 : 5, display: 'flex', alignItems: 'center', justifyContent: 'center', border: activeElement === 'divider2' ? '1px dashed grey' : 'none',}}
               size={{ width: divider2.width, height: divider2.height }}
               position={{ x: divider2.x, y: divider2.y }}
               onDragStart={(e) => { e.stopPropagation(); onElementClick('divider2', e as any); handleDragStart(); }}
@@ -287,7 +305,7 @@ const GenericCardPreview = (
               onClick={(e: React.MouseEvent<Element, MouseEvent>) => onElementClick('footer', e)}
             >
               <footer
-                style={{ ...getTextStyles(footerProps), fontSize: '0.8em' }}
+                style={{ ...getTextStyles(footerProps, 'footer'), fontSize: '0.8em' }}
               >
                 {textWrapper(footerProps.text, footerProps)}
               </footer>
@@ -298,7 +316,7 @@ const GenericCardPreview = (
   );
 }
 
-const CardBackPreview = ({ cardProps, imageBack, imageBackSize, onImageUpdate, activeElement, onElementClick, handleDragStart, handleDragStop }: { cardProps: any, imageBack: string | null, imageBackSize: any, onImageUpdate: any, activeElement: ElementName, onElementClick: (element: ElementName, e: React.MouseEvent<Element, MouseEvent>) => void, handleDragStart: () => void, handleDragStop: (element: string, d: any, size: any) => void }) => {
+const CardBackPreview = ({ cardProps, imageBack, imageBackSize, onImageUpdate, activeElement, onElementClick, handleDragStart, handleDragStop, imageBorder }: { cardProps: any, imageBack: string | null, imageBackSize: any, onImageUpdate: any, activeElement: ElementName, onElementClick: (element: ElementName, e: React.MouseEvent<Element, MouseEvent>) => void, handleDragStart: () => void, handleDragStop: (element: string, d: any, size: any) => void, imageBorder: any }) => {
   const { frameBack, borderColor, backBackgroundColor, backBackgroundImage } = cardProps;
   const showBorder = !frameBack;
 
@@ -340,10 +358,10 @@ const CardBackPreview = ({ cardProps, imageBack, imageBackSize, onImageUpdate, a
                  {imageBack && (
                     <Rnd
                         style={{
-                            zIndex: 3,
+                            zIndex: activeElement === 'imageBack' ? 10 : 3,
                             border: 'none',
                             boxSizing: 'border-box',
-                            outline: activeElement === 'imageBack' ? '1px dashed grey' : 'none',
+                            outline: activeElement === 'imageBack' ? `2px dashed ${!imageBorder.lockAspectRatio ? '#007bff' : 'grey'}` : 'none',
                             outlineOffset: '2px',
                         }}
                         size={{ width: imageBackSize.width, height: imageBackSize.height }}
@@ -357,7 +375,7 @@ const CardBackPreview = ({ cardProps, imageBack, imageBackSize, onImageUpdate, a
                                 height: ref.style.height,
                             })
                         }
-                        lockAspectRatio
+                        lockAspectRatio={imageBorder.lockAspectRatio}
                         bounds="parent"
                         className={activeElement === 'imageBack' ? 'interactive-element active' : 'interactive-element'}
                         onClick={(e: React.MouseEvent<Element, MouseEvent>) => onElementClick('imageBack', e)}
@@ -368,6 +386,7 @@ const CardBackPreview = ({ cardProps, imageBack, imageBackSize, onImageUpdate, a
                             style={{
                                 width: '100%',
                                 height: '100%',
+                                objectFit: 'cover',
                                 pointerEvents: 'none',
                             }}
                         />
@@ -433,7 +452,7 @@ function CardGeneratorPage() {
   const [image, setImage] = useState<string | null>(null);
   const [imageSize, setImageSize] = useState({ x: 85, y: 100, width: 150, height: 150 });
   const [imageRotation, setImageRotation] = useState(0);
-  const [imageBorder, setImageBorder] = useState({ active: false, color: '#000000', width: 3 });
+  const [imageBorder, setImageBorder] = useState({ active: false, color: '#000000', width: 3, lockAspectRatio: true });
 
   const [imageBack, setImageBack] = useState<string | null>(null);
   const [imageBackSize, setImageBackSize] = useState({ x: 85, y: 150, width: 150, height: 150 });
@@ -493,11 +512,27 @@ function CardGeneratorPage() {
   };
 
   const handleImageUpdate = (element: 'image' | 'imageBack', pos: {x: number, y: number}, size: {width: string, height: string}) => {
-    const newSize = { width: parseInt(size.width), height: parseInt(size.height) };
+    const newSize = {
+        width: parseInt(size.width.replace('px', '')),
+        height: parseInt(size.height.replace('px', ''))
+    };
+
     if (element === 'image') {
-      setImageSize(prev => ({ ...prev, ...pos, ...newSize }));
+        setImageSize(prev => ({
+            ...prev,
+            x: pos.x,
+            y: pos.y,
+            width: newSize.width,
+            height: newSize.height
+        }));
     } else {
-      setImageBackSize(prev => ({ ...prev, ...pos, ...newSize }));
+        setImageBackSize(prev => ({
+            ...prev,
+            x: pos.x,
+            y: pos.y,
+            width: newSize.width,
+            height: newSize.height
+        }));
     }
   };
 
@@ -625,7 +660,7 @@ function CardGeneratorPage() {
             <div className="customization-header">
               <h2 className="customization-title">Personalizar Carta</h2>
             </div>
-            <div className="card-body" style={{overflowY: 'auto', maxHeight: 'calc(100vh - 120px)'}}>
+            <div className="card-body">
               
               <details className="accordion-item" open={openAccordion === 'card-styles'} onClick={(e) => { e.preventDefault(); handleAccordionToggle('card-styles'); }}>
                 <summary className="accordion-header">Estilos de Carta</summary>
@@ -678,10 +713,13 @@ function CardGeneratorPage() {
                     <label>Patrón de Fondo (Trasera):</label>
                     <div className="pattern-selector">
                       {backPatterns.map(pattern => (
-                        <div 
+                        <div
                           key={pattern.name}
                           className={`pattern-thumbnail ${cardProps.backBackgroundImage === pattern.url ? 'active' : ''}`}
-                          style={{ backgroundImage: pattern.url ? `url(${pattern.url})` : 'none' }}
+                          style={{
+                            backgroundColor: cardProps.backPatternColor,
+                            '--pattern-image': `url(${pattern.url})`,
+                          } as React.CSSProperties}
                           onClick={(e) => { e.stopPropagation(); updateCardProps({ backBackgroundImage: pattern.url }); }}
                           title={pattern.name}
                         >
@@ -743,41 +781,52 @@ function CardGeneratorPage() {
                     </div>
                     ) : <p className="grid-col-span-2">Selecciona una imagen en la carta para ver sus opciones.</p>}
                   </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                      <input
-                        type="checkbox"
-                        id="imageBorder"
-                        checked={imageBorder.active}
-                        onChange={(e) =>
-                          setImageBorder((p) => ({ ...p, active: e.target.checked }))
-                        }
-                      />
-                      <label htmlFor="imageBorder">Borde de Imagen</label>
-                      {imageBorder.active && (
-                        <>
+                  <div className="options-group grid-col-span-2">
+                    <div className="form-group inline-group">
+                        <input
+                          type="checkbox"
+                          id="imageBorder"
+                          checked={imageBorder.active}
+                          onChange={(e) =>
+                            setImageBorder((p) => ({ ...p, active: e.target.checked }))
+                          }
+                        />
+                        <label htmlFor="imageBorder">Borde de Imagen</label>
+                        {imageBorder.active && (
+                          <>
+                            <input
+                              type="color"
+                              value={imageBorder.color}
+                              onChange={(e) =>
+                                setImageBorder((p) => ({ ...p, color: e.target.value }))
+                              }
+                            />
+                            <input
+                              type="number"
+                              min="1"
+                              max="20"
+                              value={imageBorder.width}
+                              onChange={(e) =>
+                                setImageBorder((p) => ({
+                                  ...p,
+                                  width: parseInt(e.target.value),
+                                }))
+                              }
+                            />
+                            px
+                          </>
+                        )}
+                      </div>
+                       <div className="form-group inline-group">
                           <input
-                            type="color"
-                            value={imageBorder.color}
-                            onChange={(e) =>
-                              setImageBorder((p) => ({ ...p, color: e.target.value }))
-                            }
+                              type="checkbox"
+                              id="cropMode"
+                              checked={!imageBorder.lockAspectRatio}
+                              onChange={(e) => setImageBorder(p => ({ ...p, lockAspectRatio: !e.target.checked }))}
                           />
-                          <input
-                            type="number"
-                            min="1"
-                            max="20"
-                            value={imageBorder.width}
-                            onChange={(e) =>
-                              setImageBorder((p) => ({
-                                ...p,
-                                width: parseInt(e.target.value),
-                              }))
-                            }
-                          />
-                          px
-                        </>
-                      )}
-                    </div>
+                          <label htmlFor="cropMode">Recortar</label>
+                      </div>
+                  </div>
                 </div>
               </details>
 
@@ -790,41 +839,43 @@ function CardGeneratorPage() {
                     <label>Texto:</label>
                     <input type="text" value={titleProps.text} onChange={(e) => setTitleProps(p => ({...p, text: e.target.value, height: 'auto'}))} className="form-card-input" />
                   </div>
-                  <div className="form-grid-group grid-col-span-2">
-                    <div className="form-group">
-                      <label>Color Texto:</label>
-                      <input type="color" value={titleProps.color} onChange={(e) => setTitleProps(p => ({...p, color: e.target.value}))} />
+                  <div className="form-group">
+                    <label>Color Texto:</label>
+                    <input type="color" style={{width: '100%'}} value={titleProps.color} onChange={(e) => setTitleProps(p => ({...p, color: e.target.value}))} />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span>Fondo:</span>
+                      <button type="button" onClick={(e) => {e.stopPropagation(); setTitleProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))}} className="action-button-circular" title="Fondo transparente">T</button>
+                    </label>
+                    <input type="color" style={{width: '100%'}} value={titleProps.backgroundColor} onChange={(e) => setTitleProps(p => ({...p, backgroundColor: e.target.value}))} />
+                  </div>
+                  <div className="options-group grid-col-span-2">
+                    <div className="form-group inline-group compact-options">
+                      <input type="checkbox" id="titleHighlight" checked={titleProps.highlight.active} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
+                      <label htmlFor="titleHighlight">Resaltado</label>
+                      {titleProps.highlight.active && <input type="color" value={titleProps.highlight.color} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                     </div>
-                    <div className="form-group">
-                      <label>Fondo:</label>
-                      <input type="color" value={titleProps.backgroundColor} onChange={(e) => setTitleProps(p => ({...p, backgroundColor: e.target.value}))} />
-                       <button type="button" onClick={(e) => {e.stopPropagation(); setTitleProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))}} className="action-button-circular" title="Fondo transparente">T</button>
-                    </div>
-                  </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="titleHighlight" checked={titleProps.highlight.active} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
-                    <label htmlFor="titleHighlight">Resaltado</label>
-                    {titleProps.highlight.active && <input type="color" value={titleProps.highlight.color} onChange={e => setTitleProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
-                  </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="titleStroke" checked={titleProps.stroke.active} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
-                    <label htmlFor="titleStroke">Borde de Letra</label>
-                    {titleProps.stroke.active && <>
-                      <input type="color" value={titleProps.stroke.color} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, color: e.target.value}}))} />
-                      <input type="number" min="1" max="10" value={titleProps.stroke.width} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
-                    </>}
-                  </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="titleBorder" checked={titleProps.border.active} onChange={e => setTitleProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
-                    <label htmlFor="titleBorder">Borde de Caja</label>
-                    {titleProps.border.active && <>
-                      <input type="color" value={titleProps.border.color} onChange={e => setTitleProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
-                      <input type="number" min="1" max="10" value={titleProps.border.width} onChange={e => setTitleProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
-                      <select value={titleProps.border.style} onChange={e => setTitleProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
-                        <option value="rounded">Redondo</option>
-                        <option value="square">Cuadrado</option>
-                      </select>
-                    </>}
+                     <div className="form-group inline-group compact-options">
+                        <input type="checkbox" id="titleStroke" checked={titleProps.stroke.active} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
+                        <label htmlFor="titleStroke">Borde de Letra</label>
+                        {titleProps.stroke.active && <>
+                          <input type="color" value={titleProps.stroke.color} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, color: e.target.value}}))} />
+                          <input type="number" min="1" max="10" value={titleProps.stroke.width} onChange={e => setTitleProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
+                        </>}
+                      </div>
+                     <div className="form-group inline-group compact-options">
+                          <input type="checkbox" id="titleBorder" checked={titleProps.border.active} onChange={e => setTitleProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
+                          <label htmlFor="titleBorder">Borde de Caja</label>
+                        {titleProps.border.active && <>
+                          <input type="color" value={titleProps.border.color} onChange={e => setTitleProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
+                          <input type="number" min="1" max="10" value={titleProps.border.width} onChange={e => setTitleProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
+                          <select value={titleProps.border.style} onChange={e => setTitleProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
+                            <option value="rounded">Redondo</option>
+                            <option value="square">Cuadrado</option>
+                          </select>
+                        </>}
+                      </div>
                   </div>
                 </div>
               </details>
@@ -835,41 +886,43 @@ function CardGeneratorPage() {
                     <label>Texto:</label>
                     <textarea value={descriptionProps.text} onChange={(e) => setDescriptionProps(p => ({...p, text: e.target.value, height: 'auto'}))} rows={4} className="form-card-textarea"/>
                   </div>
-                   <div className="form-grid-group grid-col-span-2">
-                    <div className="form-group">
-                      <label>Color Texto:</label>
-                      <input type="color" value={descriptionProps.color} onChange={(e) => setDescriptionProps(p => ({...p, color: e.target.value}))} />
-                    </div>
-                    <div className="form-group">
-                      <label>Fondo:</label>
-                      <input type="color" value={descriptionProps.backgroundColor} onChange={(e) => setDescriptionProps(p => ({...p, backgroundColor: e.target.value}))} />
+                   <div className="form-group">
+                    <label>Color Texto:</label>
+                    <input type="color" style={{width: '100%'}} value={descriptionProps.color} onChange={(e) => setDescriptionProps(p => ({...p, color: e.target.value}))} />
+                  </div>
+                  <div className="form-group">
+                     <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span>Fondo:</span>
                       <button type="button" onClick={(e) => {e.stopPropagation(); setDescriptionProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))}} className="action-button-circular" title="Fondo transparente">T</button>
+                    </label>
+                    <input type="color" style={{width: '100%'}} value={descriptionProps.backgroundColor} onChange={(e) => setDescriptionProps(p => ({...p, backgroundColor: e.target.value}))} />
+                  </div>
+                  <div className="options-group grid-col-span-2">
+                    <div className="form-group inline-group compact-options">
+                      <input type="checkbox" id="descHighlight" checked={descriptionProps.highlight.active} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
+                      <label htmlFor="descHighlight">Resaltado</label>
+                      {descriptionProps.highlight.active && <input type="color" value={descriptionProps.highlight.color} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                     </div>
-                  </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="descHighlight" checked={descriptionProps.highlight.active} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
-                    <label htmlFor="descHighlight">Resaltado</label>
-                    {descriptionProps.highlight.active && <input type="color" value={descriptionProps.highlight.color} onChange={e => setDescriptionProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
-                  </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="descStroke" checked={descriptionProps.stroke.active} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
-                    <label htmlFor="descStroke">Borde de Letra</label>
-                    {descriptionProps.stroke.active && <>
-                      <input type="color" value={descriptionProps.stroke.color} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, color: e.target.value}}))} />
-                      <input type="number" min="1" max="10" value={descriptionProps.stroke.width} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
-                    </>}
-                  </div>
-                   <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="descBorder" checked={descriptionProps.border.active} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
-                    <label htmlFor="descBorder">Borde de Caja</label>
-                    {descriptionProps.border.active && <>
-                      <input type="color" value={descriptionProps.border.color} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
-                      <input type="number" min="1" max="10" value={descriptionProps.border.width} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
-                      <select value={descriptionProps.border.style} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
-                        <option value="rounded">Redondo</option>
-                        <option value="square">Cuadrado</option>
-                      </select>
-                    </>}
+                    <div className="form-group inline-group compact-options">
+                        <input type="checkbox" id="descStroke" checked={descriptionProps.stroke.active} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
+                        <label htmlFor="descStroke">Borde de Letra</label>
+                      {descriptionProps.stroke.active && <>
+                        <input type="color" value={descriptionProps.stroke.color} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, color: e.target.value}}))} />
+                        <input type="number" min="1" max="10" value={descriptionProps.stroke.width} onChange={e => setDescriptionProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
+                      </>}
+                    </div>
+                     <div className="form-group inline-group compact-options">
+                        <input type="checkbox" id="descBorder" checked={descriptionProps.border.active} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
+                        <label htmlFor="descBorder">Borde de Caja</label>
+                      {descriptionProps.border.active && <>
+                        <input type="color" value={descriptionProps.border.color} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
+                        <input type="number" min="1" max="10" value={descriptionProps.border.width} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
+                        <select value={descriptionProps.border.style} onChange={e => setDescriptionProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
+                          <option value="rounded">Redondo</option>
+                          <option value="square">Cuadrado</option>
+                        </select>
+                      </>}
+                    </div>
                   </div>
                 </div>
               </details>
@@ -880,41 +933,43 @@ function CardGeneratorPage() {
                     <label>Texto:</label>
                     <input type="text" value={footerProps.text} onChange={(e) => setFooterProps(p => ({...p, text: e.target.value, height: 'auto'}))} className="form-card-input" />
                   </div>
-                  <div className="form-grid-group grid-col-span-2">
-                    <div className="form-group">
-                      <label>Color Texto:</label>
-                      <input type="color" value={footerProps.color} onChange={(e) => setFooterProps(p => ({...p, color: e.target.value}))} />
-                    </div>
-                    <div className="form-group">
-                      <label>Fondo:</label>
-                      <input type="color" value={footerProps.backgroundColor} onChange={(e) => setFooterProps(p => ({...p, backgroundColor: e.target.value}))} />
+                  <div className="form-group">
+                    <label>Color Texto:</label>
+                    <input type="color" style={{width: '100%'}} value={footerProps.color} onChange={(e) => setFooterProps(p => ({...p, color: e.target.value}))} />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span>Fondo:</span>
                       <button type="button" onClick={(e) => {e.stopPropagation(); setFooterProps(p => ({...p, backgroundColor: 'rgba(0,0,0,0)'}))}} className="action-button-circular" title="Fondo transparente">T</button>
+                    </label>
+                    <input type="color" style={{width: '100%'}} value={footerProps.backgroundColor} onChange={(e) => setFooterProps(p => ({...p, backgroundColor: e.target.value}))} />
+                  </div>
+                  <div className="options-group grid-col-span-2">
+                    <div className="form-group inline-group compact-options">
+                      <input type="checkbox" id="footerHighlight" checked={footerProps.highlight.active} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
+                      <label htmlFor="footerHighlight">Resaltado</label>
+                      {footerProps.highlight.active && <input type="color" value={footerProps.highlight.color} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
                     </div>
-                  </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="footerHighlight" checked={footerProps.highlight.active} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, active: e.target.checked}}))} />
-                    <label htmlFor="footerHighlight">Resaltado</label>
-                    {footerProps.highlight.active && <input type="color" value={footerProps.highlight.color} onChange={e => setFooterProps(p => ({...p, highlight: {...p.highlight, color: e.target.value}}))} />}
-                  </div>
-                  <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="footerStroke" checked={footerProps.stroke.active} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
-                    <label htmlFor="footerStroke">Borde de Letra</label>
-                    {footerProps.stroke.active && <>
-                      <input type="color" value={footerProps.stroke.color} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, color: e.target.value}}))} />
-                      <input type="number" min="1" max="10" value={footerProps.stroke.width} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
-                    </>}
-                  </div>
-                   <div className="form-group inline-group grid-col-span-2">
-                    <input type="checkbox" id="footerBorder" checked={footerProps.border.active} onChange={e => setFooterProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
-                    <label htmlFor="footerBorder">Borde de Caja</label>
-                    {footerProps.border.active && <>
-                      <input type="color" value={footerProps.border.color} onChange={e => setFooterProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
-                      <input type="number" min="1" max="10" value={footerProps.border.width} onChange={e => setFooterProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
-                       <select value={footerProps.border.style} onChange={e => setFooterProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
-                        <option value="rounded">Redondo</option>
-                        <option value="square">Cuadrado</option>
-                      </select>
-                    </>}
+                    <div className="form-group inline-group compact-options">
+                        <input type="checkbox" id="footerStroke" checked={footerProps.stroke.active} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, active: e.target.checked}}))} />
+                        <label htmlFor="footerStroke">Borde de Letra</label>
+                      {footerProps.stroke.active && <>
+                        <input type="color" value={footerProps.stroke.color} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, color: e.target.value}}))} />
+                        <input type="number" min="1" max="10" value={footerProps.stroke.width} onChange={e => setFooterProps(p => ({...p, stroke: {...p.stroke, width: parseInt(e.target.value)}}))} />px
+                      </>}
+                    </div>
+                     <div className="form-group inline-group compact-options">
+                        <input type="checkbox" id="footerBorder" checked={footerProps.border.active} onChange={e => setFooterProps(p => ({...p, border: {...p.border, active: e.target.checked}}))} />
+                        <label htmlFor="footerBorder">Borde de Caja</label>
+                      {footerProps.border.active && <>
+                        <input type="color" value={footerProps.border.color} onChange={e => setFooterProps(p => ({...p, border: {...p.border, color: e.target.value}}))} />
+                        <input type="number" min="1" max="10" value={footerProps.border.width} onChange={e => setFooterProps(p => ({...p, border: {...p.border, width: parseInt(e.target.value)}}))} />px
+                         <select value={footerProps.border.style} onChange={e => setFooterProps(p => ({...p, border: {...p.border, style: e.target.value}}))}>
+                          <option value="rounded">Redondo</option>
+                          <option value="square">Cuadrado</option>
+                        </select>
+                      </>}
+                    </div>
                   </div>
                 </div>
               </details>
@@ -967,6 +1022,7 @@ function CardGeneratorPage() {
                   onElementClick={handleElementClick}
                   handleDragStart={handleDragStart}
                   handleDragStop={handleDragStop}
+                  imageBorder={imageBorder}
                 />
               </div>
             </div>
