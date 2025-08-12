@@ -108,7 +108,7 @@ const SavedCardsPage: React.FC = () => {
         ) : (
           <div className="no-cards-message spell-form-as-card">
             <h3>No tienes cartas guardadas</h3>
-            <p>¡Ve al <Link to="/card-generator">Creador de Cartas</Link> para empezar a dise��ar!</p>
+            <p>¡Ve al <Link to="/card-generator">Creador de Cartas</Link> para empezar a diseñar!</p>
           </div>
         )}
       </div>

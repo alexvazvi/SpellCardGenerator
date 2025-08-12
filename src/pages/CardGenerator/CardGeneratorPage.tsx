@@ -384,9 +384,6 @@ function CardGeneratorPage() {
                     </div>
                   )}
                 </div>
-                <div className="save-card-container">
-              <button className="save-card-button" onClick={handleSaveCard}>Guardar Carta</button>
-            </div>
               </details>
 
               <details className="accordion-item" open={openAccordion === 'main-image' || ['image', 'imageBack'].includes(activeElement || '')} onClick={(e) => { e.preventDefault(); handleAccordionToggle('main-image'); }}>
@@ -673,11 +670,11 @@ function CardGeneratorPage() {
               </div>
             </div>
           </div>
-           <div className="save-card-fab-container">
-            <button className="action-button-circular" onClick={handleSaveCard} title="Guardar Carta">
-              <i className="fas fa-save"></i>
-            </button>
-          </div>
+          <div className="save-card-fab-container">
+              <button className="action-button-circular" onClick={handleSaveCard} title="Guardar Carta">
+                <i className="fas fa-save"></i>
+              </button>
+            </div>
         </main>
       </div>
     </PageContainer>

@@ -64,6 +64,14 @@
   width: 320px;
   height: 450px;
   flex-shrink: 0; /* Prevent the container from shrinking */
+  position: relative; /* Establish positioning context for the FAB */
+}
+
+.save-card-fab-container {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
 }
 
 .card-content-area {
