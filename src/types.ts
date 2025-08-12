@@ -1,6 +1,6 @@
 
 // Definimos una interfaz base para las propiedades de los elementos de texto
-export export interface TextElementProps {
+export interface TextElementProps {
   text: string;
   x: number;
   y: number;
@@ -74,5 +74,18 @@ export interface Card {
   imageBackSize: ImageState;
   divider1: DividerState;
   divider2: DividerState;
+}
+
+// Interfaz para un hechizo de D&D, usada en el generador de cartas de hechizos
+export interface Spell {
+  id: string;
+  name: string;
+  level: string;
+  school: string;
+  castingTime: string;
+  range: string;
+  components: string;
+  duration: string;
+  description: string;
 }
 

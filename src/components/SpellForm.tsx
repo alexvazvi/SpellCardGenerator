@@ -16,7 +16,7 @@ const SpellForm: React.FC<SpellFormProps> = ({ onAddSpell, showSuccess }) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNewSpell(prev => ({ ...prev, [name]: value }));
+    setNewSpell((prev: Spell) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
