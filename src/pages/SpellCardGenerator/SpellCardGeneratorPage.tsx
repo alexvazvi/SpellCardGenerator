@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid'; // Import uuid
 import 'animate.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './SpellCardGeneratorPage.css';
@@ -23,8 +24,10 @@ const SpellCardGeneratorPage = () => {
     } catch (error) {
       console.error("Error reading spells from localStorage:", error);
     }
+    // Añadimos IDs a los hechizos iniciales si no los tienen
     return [
       {
+        id: uuidv4(),
         name: 'Bola de Fuego',
         level: '3',
         school: 'Evocación',
@@ -35,6 +38,7 @@ const SpellCardGeneratorPage = () => {
         description: 'Una explosión de llamas rugientes estalla en un punto de tu elección dentro del alcance. Cada criatura en una esfera de 20 pies de radio centrada en ese punto debe hacer una tirada de salvación de Destreza. Recibe 8d6 de daño por fuego si falla, o la mitad si tiene éxito.'
       },
       {
+        id: uuidv4(),
         name: 'Rayo de Escarcha',
         level: '0 (Truco)',
         school: 'Evocación',
@@ -44,7 +48,7 @@ const SpellCardGeneratorPage = () => {
         duration: 'Instantánea',
         description: 'Un rayo de energía gélida se proyecta hacia una criatura dentro del alcance. Haz un ataque de hechizo a distancia contra el objetivo. Si impactas, el objetivo recibe 1d8 de daño por frío y su velocidad se reduce en 10 pies hasta el comienzo de tu siguiente turno.'
       },
-    ];
+    ].map(spell => ({ ...spell, id: spell.id || uuidv4() }));
   });
   const [showSuccess, setShowSuccess] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -63,14 +67,15 @@ const SpellCardGeneratorPage = () => {
     }
   }, [spells]);
 
-  const addSpell = (spell: Spell) => {
-    setSpells(prevSpells => [...prevSpells, spell]);
+  const addSpell = (spellDraft: Omit<Spell, 'id'>) => {
+    const newSpell: Spell = { ...spellDraft, id: uuidv4() };
+    setSpells(prevSpells => [...prevSpells, newSpell]);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 1200);
   };
 
   const deleteSpell = (spellToDelete: Spell) => {
-    setSpells(prevSpells => prevSpells.filter(spell => spell !== spellToDelete));
+    setSpells(prevSpells => prevSpells.filter(spell => spell.id !== spellToDelete.id));
     // After deleting, check if the current page would become empty
     if (currentSpells.length === 1 && currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -221,7 +226,7 @@ const SpellCardGeneratorPage = () => {
           <div className="card-container">
             {currentSpells.map((spell, index) => (
               <SpellCard
-                key={spell.name + index} // Use a more stable key
+                key={spell.id} // Usar el ID como clave única
                 spell={spell}
                 onDelete={() => deleteSpell(spell)}
                 isEditMode={isEditMode}
