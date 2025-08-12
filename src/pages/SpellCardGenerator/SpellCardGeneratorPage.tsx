@@ -183,13 +183,13 @@ const SpellCardGeneratorPage = () => {
           style={{ display: 'none' }}
           accept=".json"
         />
-        <button className="action-button" onClick={handleImportClick} title="Importar desde JSON">
+        <button className="action-button-circular" onClick={handleImportClick} title="Importar desde JSON">
             <i className="fas fa-file-import"></i>
         </button>
-        <button className="action-button" onClick={exportToPDF} title="Exportar a PDF">
+        <button className="action-button-circular" onClick={exportToPDF} title="Exportar a PDF">
             <i className="fas fa-file-pdf"></i>
         </button>
-        <button className="action-button" onClick={toggleDarkMode} title={darkMode ? 'Modo Claro' : 'Modo Oscuro'}>
+        <button className="action-button-circular" onClick={toggleDarkMode} title={darkMode ? 'Modo Claro' : 'Modo Oscuro'}>
             <i className={`fas ${darkMode ? 'fa-sun' : 'fa-moon'}`}></i>
         </button>
       </div>

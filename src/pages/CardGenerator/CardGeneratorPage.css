@@ -28,7 +28,9 @@
 }
 
 .customization-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-bottom: 1rem;
   margin-bottom: 1rem;
   border-bottom: 2px solid;
@@ -55,6 +57,7 @@
   padding: 2rem;
   box-sizing: border-box;
   perspective: 1500px;
+  position: relative;
 }
 
 .card-flipper-container {
@@ -253,12 +256,16 @@
 .action-button-circular {
     background-color: var(--color-accent);
     color: var(--color-parchment);
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    border: 1px solid var(--color-accent-dark);
-    font-size: 0.8rem;
-    font-weight: bold;
+    border: 2px solid var(--color-accent-dark);
+    box-shadow: 0 4px 8px #0003;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .3s ease;
 }
 
 .action-button-circular:hover {
@@ -410,3 +417,13 @@ input[type="range"]::-moz-range-track {
 .options-group .form-group {
   margin-bottom: 0.5rem; /* Reduce bottom margin */
 }
+
+/* No longer needed */
+/*
+.save-card-fab-container {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 100;
+}
+*/

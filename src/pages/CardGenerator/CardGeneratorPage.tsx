@@ -568,7 +568,33 @@ function CardGeneratorPage() {
       handleElementUpdate(element, { x: d.x, y: d.y }, {width: String(size.width), height: String(size.height)});
     }
   };
-  
+  const handleSaveCard = () => {
+    const cardState = {
+      id: Date.now(),
+      cardProps,
+      titleProps,
+      descriptionProps,
+      footerProps,
+      image,
+      imageSize,
+      imageRotation,
+      imageBorder,
+      imageBack,
+      imageBackSize,
+      divider1,
+      divider2,
+    };
+
+    try {
+      const savedCards = JSON.parse(localStorage.getItem('savedCards') || '[]');
+      savedCards.push(cardState);
+      localStorage.setItem('savedCards', JSON.stringify(savedCards));
+      alert('¡Carta guardada con éxito!');
+    } catch (error) {
+      console.error('Error al guardar la carta:', error);
+      alert('Hubo un error al intentar guardar la carta.');
+    }
+  };
   const handleElementUpdate = (element: string, pos: {x: number, y: number}, size: {width: string, height: string}) => {
     const newSize = { width: parseInt(size.width), height: parseInt(size.height) };
     let newPos = { x: pos.x, y: pos.y };
@@ -622,7 +648,15 @@ function CardGeneratorPage() {
       const moveThreshold = 5;
       const movedX = Math.abs(e.clientX - mouseDownPos.current.x);
       const movedY = Math.abs(e.clientY - mouseDownPos.current.y);
+      
+      // If an element was active, this click is only to deselect it.
+      if (activeElement) {
+        setActiveElement(null);
+        elementClicked.current = false;
+        return;
+      }
 
+      // If we are dragging, or clicking on an element, or moving the mouse too much, don't flip
       if (isDragging || elementClicked.current || movedX > moveThreshold || movedY > moveThreshold) {
         elementClicked.current = false; // Reset for next interaction
         return;
@@ -741,6 +775,9 @@ function CardGeneratorPage() {
                     </div>
                   )}
                 </div>
+                <div className="save-card-container">
+              <button className="save-card-button" onClick={handleSaveCard}>Guardar Carta</button>
+            </div>
               </details>
 
               <details className="accordion-item" open={openAccordion === 'main-image' || ['image', 'imageBack'].includes(activeElement || '')} onClick={(e) => { e.preventDefault(); handleAccordionToggle('main-image'); }}>
@@ -1026,6 +1063,11 @@ function CardGeneratorPage() {
                 />
               </div>
             </div>
+          </div>
+           <div className="save-card-fab-container">
+            <button className="action-button-circular" onClick={handleSaveCard} title="Guardar Carta">
+              <i className="fas fa-save"></i>
+            </button>
           </div>
         </main>
       </div>

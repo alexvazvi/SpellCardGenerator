@@ -36,6 +36,12 @@ const Navigation: React.FC = () => {
             <span>Item Cards</span>
           </NavLink>
         </li>
+        <li>
+          <NavLink to="/saved-cards" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+          <i className="fa-solid fa-treasure-chest"></i>
+            <span>Equipo</span>
+          </NavLink>
+        </li>
       </ul>
       <div className="nav-user" ref={dropdownRef}>
         <button onClick={() => setDropdownOpen(!dropdownOpen)} className="nav-user-button">
