@@ -625,7 +625,7 @@ function CardGeneratorPage() {
         </aside>
         <main className="preview-panel">
           <div 
-            className="card-flipper-container" 
+            className="card-preview-container" 
             onMouseUp={(e) => handleCardClick(e)} 
             onMouseDown={(e) => {
               elementClicked.current = false;

@@ -60,7 +60,11 @@
   position: relative;
 }
 
-/* The card flipper styles have been moved to App.css for global use */
+.card-preview-container {
+  width: 320px;
+  height: 450px;
+  flex-shrink: 0; /* Prevent the container from shrinking */
+}
 
 .card-content-area {
   position: absolute;
